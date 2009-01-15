@@ -1,7 +1,5 @@
 package info.flexmojos.utilities;
 
-import info.rvin.flexmojos.utilities.MavenUtils;
-
 import java.io.File;
 
 import org.apache.maven.plugin.MojoExecutionException;
@@ -34,11 +32,11 @@ public class FlashPlayerUtils
         }
         else if ( MavenUtils.isUnixBased() )
         {
-            trustPath = home + ".macromedia/Flash_Player/#Security/FlashPlayerTrust";
+            trustPath = home + "/.macromedia/Flash_Player/#Security/FlashPlayerTrust";
         }
         else if ( MavenUtils.isMac() )
         {
-            trustPath = home + "Library/Preferences/Macromedia/Flash Player/#Security/FlashPlayerTrust";
+            trustPath = home + "/Library/Preferences/Macromedia/Flash Player/#Security/FlashPlayerTrust";
         }
         else
         // if isUnsupported OS
