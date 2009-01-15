@@ -1,5 +1,7 @@
 package info.flexmojos.utilities;
 
+import info.rvin.flexmojos.utilities.MavenUtils;
+
 import java.io.File;
 
 import org.apache.maven.plugin.MojoExecutionException;
