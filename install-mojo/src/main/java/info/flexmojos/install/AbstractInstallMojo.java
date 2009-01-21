@@ -408,7 +408,7 @@ public abstract class AbstractInstallMojo
 
         installFlexFrameworkArtifacts();
 
-        installBundle();
+//        installBundle();
 
     }
 
