@@ -27,6 +27,8 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.sonatype.flexmojos.utilities.MavenUtils;
 
+import flex2.tools.oem.Report;
+
 /**
  * Goal to compile the Flex test sources.
  * 
@@ -344,4 +346,12 @@ public class TestCompilerMojo
     {
         // modules are ignored on unit tests
     }
+    
+    @Override
+    protected void writeReport( Report report, String type )
+        throws MojoExecutionException
+    {
+        // reports are ignored on unit tests
+    }    
+
 }
