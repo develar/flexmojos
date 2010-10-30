@@ -7,6 +7,7 @@ import com.adobe.air.nai.DMGPackager;
 
 public class FlexmojosDMGPackager
     extends DMGPackager
+    implements IPackager
 {
 
     private File naiDir;

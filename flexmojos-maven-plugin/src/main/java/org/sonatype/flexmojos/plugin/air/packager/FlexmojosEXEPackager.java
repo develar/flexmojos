@@ -7,6 +7,7 @@ import com.adobe.air.nai.EXEPackager;
 
 public class FlexmojosEXEPackager
     extends EXEPackager
+    implements IPackager
 {
 
     private File naiDir;
