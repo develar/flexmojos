@@ -2153,19 +2153,7 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
     @SuppressWarnings( "unchecked" )
     protected String getFrameworkVersion()
     {
-        Artifact dep = null;
-        if ( dep == null )
-        {
-            dep = getDependency( groupId( "com.adobe.flex.framework" ), artifactId( "playerglobal" ), type( "swc" ) );
-        }
-        if ( dep == null )
-        {
-            dep = getDependency( groupId( "com.adobe.flex.framework" ), artifactId( "airglobal" ), type( "swc" ) );
-        }
-        if ( dep == null )
-        {
-            dep = getDependency( groupId( "com.adobe.flex.framework" ), artifactId( "flex-framework" ), type( "pom" ) );
-        }
+        Artifact dep = getDependency( groupId( "com.adobe.flex.framework" ), artifactId( "flex-framework" ), type( "pom" ) );
         if ( dep == null )
         {
             dep = getDependency( groupId( "com.adobe.flex.framework" ), artifactId( "air-framework" ), type( "pom" ) );
@@ -2210,7 +2198,7 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
 
             File source = global.getFile();
             File dest =
-                new File( source.getParentFile(), global.getClassifier() + "/" + global.getArtifactId() + "." + SWC );
+                new File( global.getFile().getParentFile(), global.getClassifier() + "/" + global.getArtifactId() + "." + SWC );
             global.setFile( dest );
 
             try
