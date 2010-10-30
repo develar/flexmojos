@@ -3034,11 +3034,9 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
         asList( MavenUtils.getFiles( getDependencies( anyOf( type( SWC ), type( CSS ) ),//
                                                       scope( THEME ) ) ) ) );
 
-        configureSparkCss( themes );
-
         if ( themes.isEmpty() )
         {
-            return null;
+            return Collections.EMPTY_LIST;
         }
 
         return pathsList( themes );
