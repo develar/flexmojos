@@ -42,6 +42,20 @@ public class MxmlcMojo
     implements ICommandLineConfiguration, Mojo
 {
 
+  /**
+     * @parameter default-value="true"
+     */
+    @SuppressWarnings({"UnusedDeclaration"})
+    private boolean useDefaultLocale = true;
+
+  public String getToolsLocale() {
+    return useDefaultLocale ? super.getToolsLocale() : null;
+  }
+
+  public String[] getLocale() {
+    return useDefaultLocale ? super.getLocale() : new String[0];
+  }
+
     /**
      * DOCME Again, undocumented by adobe
      * <p>
