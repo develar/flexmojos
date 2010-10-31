@@ -60,6 +60,7 @@ import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.codehaus.plexus.archiver.UnArchiver;
+import org.codehaus.plexus.util.DirectoryScanner;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
@@ -301,7 +302,7 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
      * @required
      * @readonly
      */
-    private List<String> compileSourceRoots;
+    protected List<String> compileSourceRoots;
 
     /**
      * DOCME undocumented by adobe
@@ -1565,7 +1566,7 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
     protected void configureResourceBundle( String locale, AbstractFlexCompilerMojo<?, ?> cfg )
     {
         cfg.localesCompiled = new String[] { locale };
-        cfg.localesRuntime = null;
+
         if ( locale.contains( "," ) )
         {
             cfg.classifier = locale.split( "," )[0];
@@ -1575,9 +1576,32 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
             cfg.classifier = locale;
         }
 
+      if (useResourceBundleMetadata) {
         cfg.includeResourceBundles = getResourceBundleListContent();
-        cfg.getCache().put( "getExternalLibraryPath", MavenUtils.getFiles( getDependencies( type( SWC ) ) ) );
-        cfg.getCache().put( "getLibraryPath", MavenUtils.getFiles( cfg.getCompiledResouceBundles() ) );
+      }
+      else {
+        DirectoryScanner directoryScanner = null;
+        final String bundleFileExtension = ".properties";
+        directoryScanner = new DirectoryScanner();
+        directoryScanner.setIncludes(new String[]{"*" + bundleFileExtension});
+        directoryScanner.setBasedir(MavenUtils.getLocaleResourcePath(localesSourcePath.getPath(), locale));
+        directoryScanner.scan();
+        String[] bundles = directoryScanner.getIncludedFiles();
+        for (int i = 0; i < bundles.length; i++) {
+          bundles[i] = bundles[i].substring(0, bundles[i].length() - bundleFileExtension.length());
+        }
+
+        cfg.includeResourceBundles = Arrays.asList(bundles);
+      }
+
+        cfg.getCache().put( "getExternalLibraryPath", MavenUtils.getFiles( getDependencies( type( SWC ) ), cfg.getCompiledResouceBundles() ) );
+        cfg.getCache().put( "getLibraryPath", new File[0] );
+        cfg.getCache().put( "getIncludeSources", new File[0] );
+        cfg.getCache().put( "getIncludeClasses", Collections.EMPTY_LIST );
+        cfg.getCache().put( "getIncludeNamespaces", Collections.EMPTY_LIST );
+        cfg.getCache().put( "getResourceBundleList", null );
+        cfg.getCache().put( "getSizeReport", null );
+        cfg.getCache().put( "getLinkReport", null );
 
         if ( localesOutputPath != null )
         {

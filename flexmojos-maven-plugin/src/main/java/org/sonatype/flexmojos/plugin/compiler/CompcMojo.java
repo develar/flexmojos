@@ -277,7 +277,7 @@ public class CompcMojo
         List<IIncludeFile> files = new ArrayList<IIncludeFile>();
 
         List<FileSet> patterns = new ArrayList<FileSet>();
-        if ( includeFiles == null && includeNamespaces == null && includeSources == null && includeClasses == null )
+        if ( includeFiles == null && includeNamespaces == null && includeSources == null )
         {
             patterns.addAll( resources );
         }
@@ -376,9 +376,9 @@ public class CompcMojo
 
     public File[] getIncludeSources()
     {
-        if ( includeFiles == null && getIncludeNamespaces() == null && includeSources == null && includeClasses == null )
+        if ( includeSources == null && includeClasses == null )
         {
-            return getSourcePath();
+            return PathUtil.existingFiles( compileSourceRoots );
         }
         return includeSources;
     }
