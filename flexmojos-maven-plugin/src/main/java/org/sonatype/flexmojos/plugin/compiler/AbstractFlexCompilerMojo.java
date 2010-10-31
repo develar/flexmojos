@@ -56,6 +56,7 @@ import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.model.Contributor;
 import org.apache.maven.model.Developer;
+import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.codehaus.plexus.archiver.UnArchiver;
@@ -3047,6 +3048,13 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
                 files.add( localesSourcePath );
             }
         }
+
+      for (Resource resource : project.getResources()) {
+        File dir = new File(resource.getDirectory());
+        if (dir.exists()) {
+          files.add( dir );
+        }
+      }
 
         return files.toArray( new File[0] );
     }

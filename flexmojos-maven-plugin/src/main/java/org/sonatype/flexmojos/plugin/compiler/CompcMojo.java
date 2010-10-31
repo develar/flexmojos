@@ -44,6 +44,13 @@ public class CompcMojo
     implements ICompcConfiguration, Mojo
 {
 
+  /**
+     * http://juick.com/develar/640594
+     *
+     * @parameter default-value="true"
+     */
+    private boolean includeAsAbsolute;
+
     /**
      * Writes a digest to the catalog.xml of a library. This is required when the library will be used as runtime shared
      * libraries
@@ -295,7 +302,11 @@ public class CompcMojo
 
                     public String name()
                     {
-                        return path.replace( '\\', '/' );
+                      String name = path.replace('\\', '/');
+                      if (includeAsAbsolute) {
+                        name = '/' + path;
+                      }
+                      return name;
                     }
                 } );
             }
@@ -320,7 +331,7 @@ public class CompcMojo
 
                     public String name()
                     {
-                        return file;
+                      return includeAsAbsolute ? ('/' + file) : file;
                     }
                 } );
             }
