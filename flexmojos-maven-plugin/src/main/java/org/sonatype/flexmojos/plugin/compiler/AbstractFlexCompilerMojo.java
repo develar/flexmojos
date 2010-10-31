@@ -36,6 +36,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -121,6 +122,11 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
     public Boolean getFixedLiteralVector() {
       return fixedLiteralVector;
     }
+
+    /**
+     * @parameter
+     */
+    private Manifest[] manifests;
 
     /**
      * Generate an accessible SWF
@@ -2206,15 +2212,13 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
             }
 
             File source = global.getFile();
-            File dest =
-                new File( global.getFile().getParentFile(), global.getClassifier() + "/" + global.getArtifactId() + "." + SWC );
+            File dest = new File( global.getFile().getParentFile(), global.getArtifactId() + "." + SWC );
             global.setFile( dest );
 
             try
             {
                 if ( !dest.exists() )
                 {
-                    dest.getParentFile().mkdirs();
                     getLog().debug( "Striping global artifact, source: " + source + ", dest: " + dest );
                     FileUtils.copyFile( source, dest );
                 }
@@ -2686,10 +2690,46 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
             IOUtil.close( cfg );
         }
 
-        return namespaces.toArray( new INamespace[0] );
+      initManifests();
+      if (generatedNamespaces != null) {
+        namespaces.addAll(Arrays.asList(generatedNamespaces));
+      }
+
+        return namespaces.toArray(new INamespace[namespaces.size()]);
     }
 
-    public INamespacesConfiguration getNamespacesConfiguration()
+  protected MavenNamespace[] generatedNamespaces;
+
+  protected void initManifests() {
+    if (manifests != null && generatedNamespaces == null) {
+      int manifestsLength = manifests.length;
+      generatedNamespaces = new MavenNamespace[manifestsLength];
+      for (int i = 0; i < manifestsLength; i++) {
+        Manifest manifest = manifests[i];
+        ManifestBuilder manifestBuilder = new ManifestBuilder(manifest);
+        File manifestFile = manifest.getOutputFile();
+        if (manifestFile == null) {
+          try {
+            manifestFile = new File(getOutputDirectory(), manifestBuilder.generateFileName());
+          }
+          catch (URISyntaxException e) {
+            throw new MavenRuntimeException("Invalid manifest URI", e);
+          }
+        }
+
+        try {
+          manifestBuilder.build(compileSourceRoots, manifestFile);
+        }
+        catch (IOException e) {
+          throw new MavenRuntimeException("Can't generate manifest file", e);
+        }
+
+        generatedNamespaces[i] = new MavenNamespace(manifest.getURI(), manifestFile);
+      }
+    }
+  }
+
+  public INamespacesConfiguration getNamespacesConfiguration()
     {
         return this;
     }

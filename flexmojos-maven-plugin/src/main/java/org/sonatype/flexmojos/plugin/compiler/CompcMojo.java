@@ -5,6 +5,7 @@ import static org.sonatype.flexmojos.plugin.common.FlexExtension.SWC;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.maven.model.FileSet;
@@ -17,6 +18,7 @@ import org.sonatype.flexmojos.compiler.IIncludeFile;
 import org.sonatype.flexmojos.compiler.IIncludeStylesheet;
 import org.sonatype.flexmojos.compiler.command.Result;
 import org.sonatype.flexmojos.plugin.compiler.attributes.MavenIncludeStylesheet;
+import org.sonatype.flexmojos.plugin.compiler.attributes.MavenNamespace;
 import org.sonatype.flexmojos.plugin.compiler.attributes.converter.SimplifiablePattern;
 import org.sonatype.flexmojos.util.PathUtil;
 
@@ -334,6 +336,15 @@ public class CompcMojo
 
     public List<String> getIncludeNamespaces()
     {
+      initManifests();
+      if (generatedNamespaces != null) {
+        List<String> uris = new ArrayList<String>(generatedNamespaces.length);
+        for (MavenNamespace generatedNamespace : generatedNamespaces) {
+          uris.add(generatedNamespace.uri());
+        }
+        return uris;
+      }
+
         if ( includeNamespaces != null )
         {
             return includeNamespaces;
