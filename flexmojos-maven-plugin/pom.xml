@@ -123,14 +123,14 @@
                   <type>swc</type>
                   <destFileName>framework-4.swc</destFileName>
                 </artifactItem>
-                <artifactItem>
-                  <groupId>com.adobe.flex.framework</groupId>
-                  <artifactId>playerglobal</artifactId>
-                  <version>${flex.sdk.version}</version>
-                  <classifier>10.1</classifier>
-                  <type>swc</type>
-                  <destFileName>playerglobal-10.1-4.swc</destFileName>
-                </artifactItem>
+                <!--<artifactItem>-->
+                  <!--<groupId>com.adobe.flex.framework</groupId>-->
+                  <!--<artifactId>playerglobal</artifactId>-->
+                  <!--<version>${flex.sdk.version}</version>-->
+                  <!--<classifier>10.1</classifier>-->
+                  <!--<type>swc</type>-->
+                  <!--<destFileName>playerglobal-10.1-4.swc</destFileName>-->
+                <!--</artifactItem>-->
               </artifactItems>
               <outputDirectory>${project.build.testOutputDirectory}/swcs</outputDirectory>
             </configuration>

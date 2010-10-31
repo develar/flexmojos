@@ -114,6 +114,15 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
     private static final Object lock = new Object();
 
     /**
+     * @parameter default-value="false"
+     */
+    private boolean fixedLiteralVector;
+
+    public Boolean getFixedLiteralVector() {
+      return fixedLiteralVector;
+    }
+
+    /**
      * Generate an accessible SWF
      * <p>
      * Equivalent to -compiler.accessible

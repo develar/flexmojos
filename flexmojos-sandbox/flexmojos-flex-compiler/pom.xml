@@ -92,26 +92,26 @@
               <outputDirectory>${project.build.testOutputDirectory}/fdk</outputDirectory>
             </configuration>
           </execution>
-          <execution>
-            <id>copy-playerglobal</id>
-            <phase>generate-test-resources</phase>
-            <goals>
-              <goal>copy</goal>
-            </goals>
-            <configuration>
-              <artifactItems>
-                <artifactItem>
-                  <groupId>com.adobe.flex.framework</groupId>
-                  <artifactId>playerglobal</artifactId>
-                  <version>${flex.sdk.version}</version>
-                  <classifier>10.1</classifier>
-                  <type>swc</type>
-                  <destFileName>playerglobal.swc</destFileName>
-                </artifactItem>
-              </artifactItems>
-              <outputDirectory>${project.build.testOutputDirectory}/fdk</outputDirectory>
-            </configuration>
-          </execution>
+          <!--<execution>-->
+            <!--<id>copy-playerglobal</id>-->
+            <!--<phase>generate-test-resources</phase>-->
+            <!--<goals>-->
+              <!--<goal>copy</goal>-->
+            <!--</goals>-->
+            <!--<configuration>-->
+              <!--<artifactItems>-->
+                <!--<artifactItem>-->
+                  <!--<groupId>com.adobe.flex.framework</groupId>-->
+                  <!--<artifactId>playerglobal</artifactId>-->
+                  <!--<version>${flex.sdk.version}</version>-->
+                  <!--<classifier>10.1</classifier>-->
+                  <!--<type>swc</type>-->
+                  <!--<destFileName>playerglobal.swc</destFileName>-->
+                <!--</artifactItem>-->
+              <!--</artifactItems>-->
+              <!--<outputDirectory>${project.build.testOutputDirectory}/fdk</outputDirectory>-->
+            <!--</configuration>-->
+          <!--</execution>-->
         </executions>
       </plugin>
     </plugins>
