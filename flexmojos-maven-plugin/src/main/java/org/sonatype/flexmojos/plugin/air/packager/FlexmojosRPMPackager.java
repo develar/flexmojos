@@ -7,6 +7,7 @@ import com.adobe.air.nai.RPMPackager;
 
 public class FlexmojosRPMPackager
     extends RPMPackager
+    implements IPackager
 {
 
     private File naiDir;

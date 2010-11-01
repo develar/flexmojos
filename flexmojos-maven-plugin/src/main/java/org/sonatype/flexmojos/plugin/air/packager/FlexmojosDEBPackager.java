@@ -7,6 +7,7 @@ import com.adobe.air.nai.DEBPackager;
 
 public class FlexmojosDEBPackager
     extends DEBPackager
+    implements IPackager
 {
 
     private File naiDir;
@@ -30,5 +31,5 @@ public class FlexmojosDEBPackager
     {
         return new File( naiDir, "lib" );
     }
-
+    
 }
