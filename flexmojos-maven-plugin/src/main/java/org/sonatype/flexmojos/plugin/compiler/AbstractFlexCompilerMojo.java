@@ -7,9 +7,7 @@ import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.sonatype.flexmojos.matcher.artifact.ArtifactMatcher.artifactId;
 import static org.sonatype.flexmojos.matcher.artifact.ArtifactMatcher.classifier;
-import static org.sonatype.flexmojos.matcher.artifact.ArtifactMatcher.groupId;
 import static org.sonatype.flexmojos.matcher.artifact.ArtifactMatcher.scope;
 import static org.sonatype.flexmojos.matcher.artifact.ArtifactMatcher.type;
 import static org.sonatype.flexmojos.plugin.common.FlexClassifier.CONFIGS;
@@ -116,14 +114,24 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
 
     private static final Object lock = new Object();
 
-    /**
-     * @parameter default-value="false"
-     */
-    private boolean fixedLiteralVector;
+  /**
+   * @parameter default-value="false"
+   */
+  private boolean fixedLiteralVector;
 
-    public Boolean getFixedLiteralVector() {
-      return fixedLiteralVector;
-    }
+  /**
+   * @parameter default-value="false"
+   */
+  private boolean generateSizeReport;
+
+  /**
+   * @parameter default-value="false"
+   */
+  private boolean generateLinkReport;
+
+  public Boolean getFixedLiteralVector() {
+    return fixedLiteralVector;
+  }
 
     /**
      * @parameter
@@ -1395,16 +1403,6 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
     private String translationFormat;
 
     /**
-     * Determines whether resources bundles are included in the application
-     * <p>
-     * Equivalent to -compiler.use-resource-bundle-metadata
-     * </p>
-     * 
-     * @parameter expression="${flex.useResourceBundleMetadata}"
-     */
-    private Boolean useResourceBundleMetadata;
-
-    /**
      * Toggle whether the SWF is flagged for access to network resources
      * <p>
      * Equivalent to -use-network
@@ -1413,6 +1411,16 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
      * @parameter expression="${flex.useNetwork}"
      */
     private Boolean useNetwork;
+
+    /**
+     * Determines whether resources bundles are included in the application
+     * <p>
+     * Equivalent to -compiler.use-resource-bundle-metadata
+     * </p>
+     * 
+     * @parameter expression="${flex.useResourceBundleMetadata}"
+     */
+    private Boolean useResourceBundleMetadata;
 
     /**
      * Save callstack information to the SWF for debugging
@@ -1566,7 +1574,7 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
     protected void configureResourceBundle( String locale, AbstractFlexCompilerMojo<?, ?> cfg )
     {
         cfg.localesCompiled = new String[] { locale };
-
+        cfg.localesRuntime = null;
         if ( locale.contains( "," ) )
         {
             cfg.classifier = locale.split( "," )[0];
@@ -1610,23 +1618,19 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
     }
 
     @FlexCompatibility( minVersion = "4.0.0.11420" )
-    private void configureSparkCss( List<File> themes )
+    private void configureThemeSparkCss( List<File> themes )
     {
         File dir = getUnpackedFrameworkConfig();
 
-        File sparkCss = null;
-        if ( dir != null )
-        {
-            sparkCss = new File( dir, "themes/Spark/spark.css" );
-        }
+        File sparkCss = new File( dir, "themes/Spark/spark.css" );
 
-        if ( sparkCss == null || !sparkCss.exists() )
+        if ( !sparkCss.exists() )
         {
-            File fontsSer = new File( getOutputDirectory(), "spark.css" );
-            fontsSer.getParentFile().mkdirs();
+            sparkCss = new File( getOutputDirectory(), "spark.css" );
+            sparkCss.getParentFile().mkdirs();
             try
             {
-                FileUtils.copyURLToFile( MavenUtils.class.getResource( "/theme/spark.css" ), fontsSer );
+                FileUtils.copyURLToFile( MavenUtils.class.getResource( "/themes/spark.css" ), sparkCss );
             }
             catch ( IOException e )
             {
@@ -1635,6 +1639,30 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
         }
 
         themes.add( sparkCss );
+    }
+
+    @FlexCompatibility( minVersion = "4.0.0.11420" )
+    private void configureThemeHaloSwc( List<File> themes )
+    {
+        File dir = getUnpackedFrameworkConfig();
+
+        File haloSwc = new File( dir, "themes/Halo/halo.swc" );
+
+        if ( !haloSwc.exists() )
+        {
+            haloSwc = new File( getOutputDirectory(), "halo.swc" );
+            haloSwc.getParentFile().mkdirs();
+            try
+            {
+                FileUtils.copyURLToFile( MavenUtils.class.getResource( "/themes/halo.swc" ), haloSwc );
+            }
+            catch ( IOException e )
+            {
+                throw new MavenRuntimeException( "Error copying halo.swc file.", e );
+            }
+        }
+
+        themes.add( haloSwc );
     }
 
     public abstract Result doCompile( CFG cfg, boolean synchronize )
@@ -2190,30 +2218,6 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
         return framework;
     }
 
-    @SuppressWarnings( "unchecked" )
-    protected String getFrameworkVersion()
-    {
-        Artifact dep = getDependency( groupId( "com.adobe.flex.framework" ), artifactId( "flex-framework" ), type( "pom" ) );
-        if ( dep == null )
-        {
-            dep = getDependency( groupId( "com.adobe.flex.framework" ), artifactId( "air-framework" ), type( "pom" ) );
-        }
-        if ( dep == null )
-        {
-            getDependency( groupId( "com.adobe.flex.framework" ), artifactId( "framework" ), type( "swc" ) );
-        }
-        if ( dep == null )
-        {
-            getDependency( groupId( "com.adobe.flex.framework" ), artifactId( "airframework" ), type( "swc" ) );
-        }
-
-        if ( dep == null )
-        {
-            return null;
-        }
-        return dep.getVersion();
-    }
-
     public Boolean getGenerateAbstractSyntaxTree()
     {
         return generateAbstractSyntaxTree;
@@ -2464,6 +2468,10 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
 
     public String getLinkReport()
     {
+      if (!generateLinkReport) {
+        return null;
+      }
+
         File linkReport = new File( getTargetDirectory(), getFinalName() + "-" + LINK_REPORT + "." + XML );
 
         if ( linkReportAttach )
@@ -2539,12 +2547,7 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
             return new String[] {};
         }
 
-        if ( SWC.equals( getProjectType() ) )
-        {
-            return new String[] {};
-        }
-
-        return new String[] { toolsLocale };
+        return null;
     }
 
     public String[] getLocalesRuntime()
@@ -3043,6 +3046,10 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
     @FlexCompatibility( minVersion = "4.5.0" )
     public String getSizeReport()
     {
+      if (!generateSizeReport) {
+        return null;
+      }
+
         File sizeReport = new File( getTargetDirectory(), getFinalName() + "-" + SIZE_REPORT + "." + XML );
 
         if ( sizeReportAttach )
@@ -3114,6 +3121,9 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
         themes.addAll( //
         asList( MavenUtils.getFiles( getDependencies( anyOf( type( SWC ), type( CSS ) ),//
                                                       scope( THEME ) ) ) ) );
+
+//        configureThemeSparkCss( themes );
+//        configureThemeHaloSwc( themes );
 
         if ( themes.isEmpty() )
         {

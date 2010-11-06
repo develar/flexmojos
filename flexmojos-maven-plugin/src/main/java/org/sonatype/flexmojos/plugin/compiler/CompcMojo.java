@@ -295,11 +295,6 @@ public class CompcMojo
 
                 files.add( new IIncludeFile()
                 {
-                    public String path()
-                    {
-                        return file.getAbsolutePath();
-                    }
-
                     public String name()
                     {
                       String name = path.replace('\\', '/');
@@ -307,6 +302,11 @@ public class CompcMojo
                         name = '/' + path;
                       }
                       return name;
+                    }
+
+                    public String path()
+                    {
+                        return file.getAbsolutePath();
                     }
                 } );
             }
@@ -324,14 +324,14 @@ public class CompcMojo
             {
                 files.add( new IIncludeFile()
                 {
-                    public String path()
-                    {
-                        return PathUtil.file( file, scan.getBasedir() ).getAbsolutePath();
-                    }
-
                     public String name()
                     {
                       return includeAsAbsolute ? ('/' + file) : file;
+                    }
+
+                    public String path()
+                    {
+                        return PathUtil.file( file, scan.getBasedir() ).getAbsolutePath();
                     }
                 } );
             }
@@ -396,11 +396,6 @@ public class CompcMojo
             final MavenIncludeStylesheet ss = includeStylesheets[i];
             is[i] = new IIncludeStylesheet()
             {
-                public String path()
-                {
-                    return PathUtil.file( ss.getPath(), getResourcesTargetDirectories() ).getAbsolutePath();
-                }
-
                 public String name()
                 {
                     if ( ss.getName() != null )
@@ -410,10 +405,27 @@ public class CompcMojo
 
                     return PathUtil.file( ss.getPath(), getResourcesTargetDirectories() ).getName();
                 }
+
+                public String path()
+                {
+                    return PathUtil.file( ss.getPath(), getResourcesTargetDirectories() ).getAbsolutePath();
+                }
             };
         }
 
         return is;
+    }
+
+    @Override
+    public String[] getLocale()
+    {
+        String[] locale = super.getLocale();
+        if ( locale != null )
+        {
+            return locale;
+        }
+
+        return new String[] {};
     }
 
     @Override

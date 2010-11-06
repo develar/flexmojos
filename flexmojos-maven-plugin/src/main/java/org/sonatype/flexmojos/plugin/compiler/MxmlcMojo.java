@@ -41,20 +41,11 @@ public class MxmlcMojo
     extends AbstractFlexCompilerMojo<MxmlcConfigurationHolder, MxmlcMojo>
     implements ICommandLineConfiguration, Mojo
 {
-
   /**
      * @parameter default-value="true"
      */
     @SuppressWarnings({"UnusedDeclaration"})
     private boolean useDefaultLocale = true;
-
-  public String getToolsLocale() {
-    return useDefaultLocale ? super.getToolsLocale() : null;
-  }
-
-  public String[] getLocale() {
-    return useDefaultLocale ? super.getLocale() : new String[0];
-  }
 
     /**
      * DOCME Again, undocumented by adobe
@@ -78,16 +69,16 @@ public class MxmlcMojo
      * The list of modules to be compiled.
      * 
      * <pre>
-     * <modules>
-     *   <module>Module1.mxml</module>
-     *   <module>Module2.mxml</module>
-     *   <module>
-     *     <sourceFile>Module3.mxml</sourceFile>
-     *     <optimize>false</optimize>
-     *     <finalName>MyModule</finalName>
-     *     <destinationPath>dir1/dir2</destinationPath>
-     *   </module>
-     * </modules>
+     * &lt;modules&gt;
+     *   &lt;module&gt;Module1.mxml&lt;/module&gt;
+     *   &lt;module&gt;Module2.mxml&lt;/module&gt;
+     *   &lt;module&gt;
+     *     &lt;sourceFile&gt;Module3.mxml&lt;/sourceFile&gt;
+     *     &lt;optimize&gt;false&lt;/optimize&gt;
+     *     &lt;finalName&gt;MyModule&lt;/finalName&gt;
+     *     &lt;destinationPath&gt;dir1/dir2&lt;/destinationPath&gt;
+     *   &lt;/module&gt;
+     * &lt;/modules&gt;
      * </pre>
      * 
      * @parameter
@@ -241,6 +232,29 @@ public class MxmlcMojo
         return includeResourceBundles;
     }
 
+    @Override
+    public String[] getLocale()
+    {
+      if (!useDefaultLocale)
+      {
+        return null;
+      }
+      
+        String[] locales = super.getLocale();
+        if ( locales != null )
+        {
+            return locales;
+        }
+
+        if ( "css".equalsIgnoreCase( FilenameUtils.getExtension( sourceFile ) ) )
+        {
+            return new String[] {};
+        }
+
+        return new String[] { toolsLocale };
+
+    }
+
     public String getProjector()
     {
         return projector;
@@ -262,5 +276,4 @@ public class MxmlcMojo
     {
         return updateSecuritySandbox;
     }
-
 }
