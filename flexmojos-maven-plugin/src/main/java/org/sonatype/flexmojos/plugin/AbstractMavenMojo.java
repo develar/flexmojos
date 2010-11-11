@@ -450,12 +450,14 @@ public abstract class AbstractMavenMojo
         // not on dependency list, trying to resolve it manually
         if ( frmkCfg == null )
         {
-            frmkCfg = resolve( FRAMEWORK_GROUP_ID, "framework", getFrameworkVersion(), "configs", "zip" );
+          String frameworkVersion = getFrameworkVersion();
+          if (frameworkVersion != null) {
+            frmkCfg = resolve( FRAMEWORK_GROUP_ID, "framework", frameworkVersion, "configs", "zip" );
+          }
         }
         return frmkCfg;
     }
 
-    @SuppressWarnings( "unchecked" )
     public String getFrameworkVersion()
     {
         Artifact dep = getDependency( groupId( "com.adobe.flex.framework" ), artifactId( "flex-framework" ), type( "pom" ) );
@@ -465,11 +467,11 @@ public abstract class AbstractMavenMojo
         }
         if ( dep == null )
         {
-            getDependency( groupId( "com.adobe.flex.framework" ), artifactId( "framework" ), type( "swc" ) );
+            dep = getDependency( groupId( "com.adobe.flex.framework" ), artifactId( "framework" ), type( "swc" ) );
         }
         if ( dep == null )
         {
-            getDependency( groupId( "com.adobe.flex.framework" ), artifactId( "airframework" ), type( "swc" ) );
+            dep = getDependency( groupId( "com.adobe.flex.framework" ), artifactId( "airframework" ), type( "swc" ) );
         }
 
         if ( dep == null )

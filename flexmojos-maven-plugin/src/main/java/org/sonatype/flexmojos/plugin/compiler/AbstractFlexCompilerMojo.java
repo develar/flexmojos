@@ -2073,20 +2073,21 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
 
     public String getDumpConfig()
     {
-        File dumpConfig = new File( getTargetDirectory(), getFinalName() + "-" + CONFIGS + "." + XML );
-
-        if ( dumpConfigAttach )
-        {
-            if ( getClassifier() != null )
-            {
-                getLog().warn( "Config dump is not attached for artifacts with classifier" );
-            }
-            else
-            {
-                projectHelper.attachArtifact( project, XML, CONFIGS, dumpConfig );
-            }
-        }
-        return PathUtil.path( dumpConfig );
+      return null;// fuck you, Adobe.
+//        File dumpConfig = new File( getTargetDirectory(), getFinalName() + "-" + CONFIGS + "." + XML );
+//
+//        if ( dumpConfigAttach )
+//        {
+//            if ( getClassifier() != null )
+//            {
+//                getLog().warn( "Config dump is not attached for artifacts with classifier" );
+//            }
+//            else
+//            {
+//                projectHelper.attachArtifact( project, XML, CONFIGS, dumpConfig );
+//            }
+//        }
+//        return PathUtil.path( dumpConfig );
     }
 
     public Boolean getEnableRuntimeDesignLayers()
@@ -3118,9 +3119,7 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
         {
             themes.addAll( asList( files( this.themes, getResourcesTargetDirectories() ) ) );
         }
-        themes.addAll( //
-        asList( MavenUtils.getFiles( getDependencies( anyOf( type( SWC ), type( CSS ) ),//
-                                                      scope( THEME ) ) ) ) );
+        themes.addAll(asList(MavenUtils.getFiles(getDependencies(anyOf(type(SWC), type(CSS)), scope(THEME)))));
 
 //        configureThemeSparkCss( themes );
 //        configureThemeHaloSwc( themes );

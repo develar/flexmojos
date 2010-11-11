@@ -41,10 +41,9 @@ public class MxmlcMojo
     extends AbstractFlexCompilerMojo<MxmlcConfigurationHolder, MxmlcMojo>
     implements ICommandLineConfiguration, Mojo
 {
-  /**
+    /**
      * @parameter default-value="true"
      */
-    @SuppressWarnings({"UnusedDeclaration"})
     private boolean useDefaultLocale = true;
 
     /**
@@ -237,7 +236,7 @@ public class MxmlcMojo
     {
       if (!useDefaultLocale)
       {
-        return null;
+        return new String[] {};
       }
       
         String[] locales = super.getLocale();

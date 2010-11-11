@@ -15,7 +15,7 @@
       <plugin>
         <groupId>org.sonatype.flexmojos</groupId>
         <artifactId>flexmojos-maven-plugin</artifactId>
-        <version>4.0-SNAPSHOT</version>
+        <version>4.0-de1</version>
         <extensions>true</extensions>
         <configuration>
         <targetPlayer>9.0.0</targetPlayer>
