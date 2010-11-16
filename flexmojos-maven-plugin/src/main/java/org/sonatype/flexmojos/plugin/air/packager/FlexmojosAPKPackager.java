@@ -10,71 +10,71 @@ import java.security.cert.CertificateException;
 
 import com.adobe.air.Listener;
 
-//import com.adobe.air.apk.APKPackager;
+import com.adobe.air.apk.APKPackager;
 
 public class FlexmojosAPKPackager
     implements IPackager
 {
 
-    // private final APKPackager packager;
+    private final APKPackager packager;
 
     public FlexmojosAPKPackager()
     {
-        // this.packager = new APKPackager();
+        this.packager = new APKPackager();
     }
 
     public void setOutput( File output )
         throws FileNotFoundException, IOException
     {
-        // this.packager.setOutput( output );
+        this.packager.setOutput( output );
     }
 
     public void setDescriptor( File airDescriptor )
     {
-        // this.packager.setDescriptor( airDescriptor );
+        this.packager.setDescriptor( airDescriptor );
     }
 
     public void setPrivateKey( PrivateKey key )
     {
-        // this.packager.setPrivateKey( key );
+        this.packager.setPrivateKey( key );
     }
 
     public void setSignerCertificate( Certificate certificate )
         throws CertificateException
     {
-        // this.packager.setSignerCertificate( certificate );
+        this.packager.setSignerCertificate( certificate );
     }
 
     public void setCertificateChain( Certificate[] certificateChain )
         throws CertificateException
     {
-        // this.packager.setCertificateChain( certificateChain );
+        this.packager.setCertificateChain( certificateChain );
     }
 
     public void setTimestampURL( String url )
     {
-        // this.packager.setTimestampURL( url );
+        this.packager.setTimestampURL( url );
     }
 
     public void addSourceWithPath( File source, String path )
     {
-        // this.packager.addSourceWithPath( source, path );
+        this.packager.addSourceWithPath( source, path );
     }
 
     public void setListener( Listener listener )
     {
-        // this.packager.setListener( listener );
+        this.packager.setListener( listener );
     }
 
     public void createPackage()
         throws GeneralSecurityException, IOException
     {
-        // this.packager.createPackage();
+        this.packager.createPackage();
     }
 
     public void close()
     {
-        // this.packager.close();
+        this.packager.close();
     }
 
 }
