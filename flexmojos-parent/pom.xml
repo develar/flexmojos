@@ -29,6 +29,10 @@
   </prerequisites>
 
   <distributionManagement>
+    <repository>
+      <id>flyti-thirdparty</id>
+      <url>http://flyti.org:8081/content/repositories/thirdparty</url>
+    </repository>
     <snapshotRepository>
       <id>forge-snapshots</id>
       <url>${flexSnapshotUrl}</url>
