@@ -141,15 +141,15 @@
 
             <xml>com.adobe:flashplayer:9.0:exe</xml>
             <xml>com.adobe:flashplayer:10.1:exe</xml>
-            <xml>com.adobe:adl:2.0:exe</xml>
-            <xml>com.adobe.adl:nai:2.0:zip</xml>
-            <xml>com.adobe.adl:runtime:2.0:zip</xml>
+            <xml>com.adobe:adl:2.5:exe</xml>
+            <xml>com.adobe.adl:nai:2.5:zip</xml>
+            <xml>com.adobe.adl:runtime:2.5:zip</xml>
 
             <xml>com.adobe:flashplayer:9.0:uexe:linux</xml>
             <xml>com.adobe:flashplayer:10.1:uexe:linux</xml>
-            <xml>com.adobe:adl:2.0:uexe:linux</xml>
-            <xml>com.adobe.adl:nai:2.0:tar.gz:linux</xml>
-            <xml>com.adobe.adl:runtime:2.0:tar.gz:linux</xml>
+            <xml>com.adobe:adl:2.5:uexe:linux</xml>
+            <xml>com.adobe.adl:nai:2.5:tar.gz:linux</xml>
+            <xml>com.adobe.adl:runtime:2.5:tar.gz:linux</xml>
 
             <xml>com.adobe.flex:compiler:2.0.1.180927:pom</xml>
             <xml>com.adobe.flex.framework:flex-framework:2.0.1.180927:pom</xml>
@@ -235,6 +235,22 @@
             </goals>
           </execution>
         </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.scala-tools</groupId>
+        <artifactId>maven-scala-plugin</artifactId>
+        <executions>
+          <execution>
+          <phase>generate-test-sources</phase>
+            <goals>
+              <goal>testCompile</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <scalaVersion>2.8.0</scalaVersion>
+        </configuration>
       </plugin>
 
     </plugins>

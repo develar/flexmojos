@@ -123,14 +123,14 @@
                   <type>swc</type>
                   <destFileName>framework-4.swc</destFileName>
                 </artifactItem>
-                <!--<artifactItem>-->
-                  <!--<groupId>com.adobe.flex.framework</groupId>-->
-                  <!--<artifactId>playerglobal</artifactId>-->
-                  <!--<version>${flex.sdk.version}</version>-->
-                  <!--<classifier>10.1</classifier>-->
-                  <!--<type>swc</type>-->
-                  <!--<destFileName>playerglobal-10.1-4.swc</destFileName>-->
-                <!--</artifactItem>-->
+                <!--<artifactItem>
+                  <groupId>com.adobe.flex.framework</groupId>
+                  <artifactId>playerglobal</artifactId>
+                  <version>${flex.sdk.version}</version>
+                  <classifier>10.2</classifier>
+                  <type>swc</type>
+                  <destFileName>playerglobal-10-4.swc</destFileName>
+                </artifactItem>-->
               </artifactItems>
               <outputDirectory>${project.build.testOutputDirectory}/swcs</outputDirectory>
             </configuration>
@@ -138,6 +138,27 @@
         </executions>
       </plugin>
 
+      <plugin>
+        <groupId>org.sonatype.plugins</groupId>
+        <artifactId>tattletale-maven-plugin</artifactId>
+        <version>1.0</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>tattletale-dependencies</goal>
+            </goals>
+            <configuration>
+              <includeRtJar>true</includeRtJar>
+              <profiles>
+                <profile>java6</profile>
+              </profiles>
+              <reports>
+                <report>multiplejars</report>
+              </reports>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
   </build>
 
@@ -147,6 +168,16 @@
       <artifactId>flexmojos-threadlocaltoolkit-wrapper</artifactId>
       <version>${project.version}</version>
     </dependency>
+
+    <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-plugin-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-core</artifactId>
+    </dependency>
+
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>flexmojos-flex-compiler</artifactId>
@@ -187,14 +218,6 @@
     <dependency>
       <groupId>dom4j</groupId>
       <artifactId>dom4j</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven</groupId>
-      <artifactId>maven-plugin-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven</groupId>
-      <artifactId>maven-core</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
@@ -308,6 +331,13 @@
       <artifactId>apparat-maven-plugin</artifactId>
     </dependency>
 
+    <dependency>
+      <!-- must be the last dependency -->
+      <groupId>com.adobe.flex</groupId>
+      <artifactId>compiler</artifactId>
+      <version>${flex.sdk.version}</version>
+      <type>pom</type>
+    </dependency>
   </dependencies>
 
   <reporting>
@@ -383,13 +413,25 @@
                   <goal>upload-file</goal>
                 </goals>
                 <configuration>
-                  <serverId>central</serverId>
-                  <repositoryUrl>http://repository.sonatype.org/service/local/repositories/flexmojos-site/content-compressed</repositoryUrl>
-                  <file>target/${project.artifactId}-${project.version}-site.jar</file>
-                  <repositoryPath>${project.version}</repositoryPath>
+                  <repositoryPath>flexmojos/${project.version}</repositoryPath>
+                </configuration>
+              </execution>
+              <execution>
+                <id>publish-latest-site</id>
+                <phase>deploy</phase>
+                <goals>
+                  <goal>upload-file</goal>
+                </goals>
+                <configuration>
+                  <repositoryPath>flexmojos/latest</repositoryPath>
                 </configuration>
               </execution>
             </executions>
+            <configuration>
+              <serverId>rso</serverId>
+              <repositoryUrl>http://repository.sonatype.org/service/local/repositories/maven-sites/content-compressed</repositoryUrl>
+              <file>target/${project.artifactId}-${project.version}-site.jar</file>
+            </configuration>
           </plugin>
         </plugins>
       </build>

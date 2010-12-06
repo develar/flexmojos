@@ -31,13 +31,13 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.transform.SnapshotTransformation;
 import org.apache.maven.model.FileSet;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
-import org.apache.maven.repository.legacy.resolver.transform.SnapshotTransformation;
 import org.codehaus.plexus.util.DirectoryScanner;
 import org.codehaus.plexus.util.FileUtils;
 import org.sonatype.flexmojos.plugin.AbstractMavenMojo;
@@ -210,16 +210,17 @@ public class SignAirMojo
     {
         try
         {
+            KeyStore keyStore = KeyStore.getInstance( storetype );
+            keyStore.load( new FileInputStream( keystore.getAbsolutePath() ), storepass.toCharArray() );
+            String alias = keyStore.aliases().nextElement();
+            packager.setPrivateKey( (PrivateKey) keyStore.getKey( alias, storepass.toCharArray() ) );
+
             String c = this.classifier == null ? "" : "-" + this.classifier;
             File output =
                 new File( project.getBuild().getDirectory(), project.getBuild().getFinalName() + c + "." + packagerName );
             packager.setOutput( output );
             packager.setDescriptor( getAirDescriptor() );
 
-            KeyStore keyStore = KeyStore.getInstance( storetype );
-            keyStore.load( new FileInputStream( keystore.getAbsolutePath() ), storepass.toCharArray() );
-            String alias = keyStore.aliases().nextElement();
-            packager.setPrivateKey( (PrivateKey) keyStore.getKey( alias, storepass.toCharArray() ) );
             packager.setSignerCertificate( keyStore.getCertificate( alias ) );
             packager.setCertificateChain( keyStore.getCertificateChain( alias ) );
             if ( this.timestampURL != null )
@@ -483,7 +484,7 @@ public class SignAirMojo
         }
         if ( packages.contains( APK ) )
         {
-             packs.put( APK, new FlexmojosAPKPackager() );
+            packs.put( APK, new FlexmojosAPKPackager() );
         }
         if ( packages.contains( AIRN ) )
         {

@@ -8,73 +8,73 @@ import java.security.PrivateKey;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 
-//import com.adobe.air.AIRNPackager;
+import com.adobe.air.AIRNPackager;
 import com.adobe.air.Listener;
 
 public class FlexmojosAIRNPackager
     implements IPackager
 {
 
-    // private final AIRNPackager packager;
+    private final AIRNPackager packager;
 
     public FlexmojosAIRNPackager()
     {
         super();
-        // this.packager = new AIRNPackager();
+        this.packager = new AIRNPackager();
     }
 
     public void setOutput( File output )
         throws FileNotFoundException, IOException
     {
-        // this.packager.setOutput( output );
+        this.packager.setOutput( output );
     }
 
     public void setDescriptor( File airDescriptor )
     {
-        // this.packager.setDescriptor( airDescriptor );
+        this.packager.setDescriptor( airDescriptor );
     }
 
     public void setPrivateKey( PrivateKey key )
     {
-        // this.packager.setPrivateKey( key );
+        this.packager.setPrivateKey( key );
     }
 
     public void setSignerCertificate( Certificate certificate )
         throws CertificateException
     {
-        // this.packager.setSignerCertificate( certificate );
+        this.packager.setSignerCertificate( certificate );
     }
 
     public void setCertificateChain( Certificate[] certificateChain )
         throws CertificateException
     {
-        // this.packager.setCertificateChain( certificateChain );
+        this.packager.setCertificateChain( certificateChain );
     }
 
     public void setTimestampURL( String url )
     {
-        // this.packager.setTimestampURL( url );
+        this.packager.setTimestampURL( url );
     }
 
     public void addSourceWithPath( File source, String path )
     {
-        // this.packager.addSourceWithPath( source, path );
+        this.packager.addSourceWithPath( source, path );
     }
 
     public void setListener( Listener listener )
     {
-        // this.packager.setListener( listener );
+        this.packager.setListener( listener );
     }
 
     public void createPackage()
         throws GeneralSecurityException, IOException
     {
-        // this.packager.createPackage();
+        this.packager.createPackage();
     }
 
     public void close()
     {
-        // this.packager.close();
+        this.packager.close();
     }
 
 }

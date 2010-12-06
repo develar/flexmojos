@@ -7,7 +7,9 @@ import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.sonatype.flexmojos.matcher.artifact.ArtifactMatcher.artifactId;
 import static org.sonatype.flexmojos.matcher.artifact.ArtifactMatcher.classifier;
+import static org.sonatype.flexmojos.matcher.artifact.ArtifactMatcher.groupId;
 import static org.sonatype.flexmojos.matcher.artifact.ArtifactMatcher.scope;
 import static org.sonatype.flexmojos.matcher.artifact.ArtifactMatcher.type;
 import static org.sonatype.flexmojos.plugin.common.FlexClassifier.CONFIGS;
@@ -66,6 +68,7 @@ import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
 import org.hamcrest.Matcher;
 import org.sonatype.flexmojos.compatibilitykit.FlexCompatibility;
 import org.sonatype.flexmojos.compatibilitykit.FlexMojo;
+import org.sonatype.flexmojos.compiler.IApplicationDomains;
 import org.sonatype.flexmojos.compiler.ICompcConfiguration;
 import org.sonatype.flexmojos.compiler.ICompilerConfiguration;
 import org.sonatype.flexmojos.compiler.IDefaultScriptLimits;
@@ -203,6 +206,31 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
      * @parameter expression="${flex.allowSourcePathOverlap}"
      */
     private Boolean allowSourcePathOverlap;
+
+    /**
+     * Override the application domain an RSL is loaded into. The supported values are 'current', 'default', 'parent',
+     * or 'top-level'
+     * <p>
+     * Equivalent to -runtime-shared-library-settings.application-domains
+     * </p>
+     * Usage:
+     * 
+     * <pre>
+     * &lt;applicationDomains&gt;
+     *   &lt;applicationDomain&gt;
+     *     &lt;pathElement&gt;path&lt;/pathElement&gt;
+     *     &lt;applicationDomain&gt;current&lt;/applicationDomain&gt;
+     *   &lt;/applicationDomain&gt;
+     *   &lt;applicationDomain&gt;
+     *     &lt;pathElement&gt;path&lt;/pathElement&gt;
+     *     &lt;applicationDomain&gt;default&lt;/applicationDomain&gt;
+     *   &lt;/applicationDomain&gt;
+     * &lt;/applicationDomains&gt;
+     * </pre>
+     * 
+     * @parameter
+     */
+    private MavenApplicationDomains[] applicationDomains;
 
     /**
      * DOCME undocumented by adobe
@@ -1107,6 +1135,16 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
     private String minimumSupportedVersion;
 
     /**
+     * Specifies the target runtime is a mobile device
+     * <p>
+     * Equivalent to -compiler.mobile
+     * </p>
+     * 
+     * @parameter expression="${flex.mobile}"
+     */
+    private Boolean mobile;
+
+    /**
      * Specify a URI to associate with a manifest of components for use as MXML elements
      * <p>
      * Equivalent to -compiler.namespaces.namespace
@@ -1340,6 +1378,16 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
     private Boolean swcChecksum;
 
     /**
+     * Specifies the version of the compiled SWF file
+     * <p>
+     * Equivalent to -swf-version
+     * </p>
+     * 
+     * @parameter expression="${flex.swfVersion}"
+     */
+    private Integer swfVersion;
+
+    /**
      * Specifies the version of the player the application is targeting. Features requiring a later version will not be
      * compiled into the application. The minimum value supported is "9.0.0".
      * <p>
@@ -1376,6 +1424,14 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
      *   &lt;version&gt;1.0&lt;/version&gt;
      * &lt;/dependency&gt;
      * </pre>
+     * <p>
+     * There are three ways a theme can be included when you compile
+     * </p>
+     * 1 - you explicitly list a <theme> in the config of the pom file<BR>
+     * 2 - You include a dependency with scope="theme" and with type="css" or type="swc"<BR>
+     * 3 - if you don't do either of the above steps, flexmojos will attempt to automatically include a theme for you
+     * based on your dependencies. (if you depend upon mx.swc halo will be included, if you depend upon spark.swc -
+     * spark.css theme will be included)
      * 
      * @parameter
      */
@@ -1401,6 +1457,26 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
      * @parameter expression="${flex.translationFormat}"
      */
     private String translationFormat;
+
+    /**
+     * Use hardware acceleration to blit graphics to the screen, where such acceleration is available
+     * <p>
+     * Equivalent to -use-direct-blit
+     * </p>
+     * 
+     * @parameter expression="${flex.useDirectBlit}"
+     */
+    private Boolean useDirectBlit;
+
+    /**
+     * Use GPU compositing features when drawing graphics, where such acceleration is available
+     * <p>
+     * Equivalent to -compiler.use-gpu
+     * </p>
+     * 
+     * @parameter expression="${flex.useGpu}"
+     */
+    private Boolean useGpu;
 
     /**
      * Toggle whether the SWF is flagged for access to network resources
@@ -1618,51 +1694,29 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
     }
 
     @FlexCompatibility( minVersion = "4.0.0.11420" )
-    private void configureThemeSparkCss( List<File> themes )
+    private void configureThemeHaloSwc( List<File> themes )
     {
-        File dir = getUnpackedFrameworkConfig();
-
-        File sparkCss = new File( dir, "themes/Spark/spark.css" );
-
-        if ( !sparkCss.exists() )
+        File haloSwc = resolveThemeFile( "mx", "halo", "swc", "Halo" );
+        if ( haloSwc == null )
         {
-            sparkCss = new File( getOutputDirectory(), "spark.css" );
-            sparkCss.getParentFile().mkdirs();
-            try
-            {
-                FileUtils.copyURLToFile( MavenUtils.class.getResource( "/themes/spark.css" ), sparkCss );
-            }
-            catch ( IOException e )
-            {
-                throw new MavenRuntimeException( "Error copying spark.css file.", e );
-            }
+            return;
         }
 
-        themes.add( sparkCss );
+        getLog().warn( "Added the halo.swc theme because mx.swc was included as a dependency" );
+        themes.add( haloSwc );
     }
 
     @FlexCompatibility( minVersion = "4.0.0.11420" )
-    private void configureThemeHaloSwc( List<File> themes )
+    private void configureThemeSparkCss( List<File> themes )
     {
-        File dir = getUnpackedFrameworkConfig();
-
-        File haloSwc = new File( dir, "themes/Halo/halo.swc" );
-
-        if ( !haloSwc.exists() )
+        File sparkCss = resolveThemeFile( "spark", "spark", "css", "Spark" );
+        if ( sparkCss == null )
         {
-            haloSwc = new File( getOutputDirectory(), "halo.swc" );
-            haloSwc.getParentFile().mkdirs();
-            try
-            {
-                FileUtils.copyURLToFile( MavenUtils.class.getResource( "/themes/halo.swc" ), haloSwc );
-            }
-            catch ( IOException e )
-            {
-                throw new MavenRuntimeException( "Error copying halo.swc file.", e );
-            }
+            return;
         }
 
-        themes.add( haloSwc );
+        getLog().warn( "Added the spark.css theme because spark.swc was included as a dependency" );
+        themes.add( sparkCss );
     }
 
     public abstract Result doCompile( CFG cfg, boolean synchronize )
@@ -1752,6 +1806,11 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
     public Boolean getAllowSourcePathOverlap()
     {
         return allowSourcePathOverlap;
+    }
+
+    public IApplicationDomains[] getApplicationDomains()
+    {
+        return this.applicationDomains;
     }
 
     public Boolean getArchiveClassesAndAssets()
@@ -2419,8 +2478,8 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
         }
         catch ( ClassNotFoundException e )
         {
-            getLog().warn( "Unable to find license.jar on plugin classpath.  No license will be added.  Check wiki for instructions about how to add it:\n\t"
-                               + "https://docs.sonatype.org/display/FLEXMOJOS/FAQ#FAQ-1.3" );
+            /*getLog().warn( "Unable to find license.jar on plugin classpath.  No license will be added.  Check wiki for instructions about how to add it:\n\t"
+                               + "https://docs.sonatype.org/display/FLEXMOJOS/FAQ#FAQ-1.3" );*/
             return null;
         }
 
@@ -2669,9 +2728,22 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
         return this.minimumSupportedVersion;
     }
 
+    public Boolean getMobile()
+    {
+        return mobile;
+    }
+
     public IMxmlConfiguration getMxmlConfiguration()
     {
         return this;
+    }
+
+    @SuppressWarnings( "unchecked" )
+    @FlexCompatibility( minVersion = "4.5.0.17077" )
+    private Artifact getMxSwc()
+    {
+        Artifact haloSwc = getDependency( groupId( FRAMEWORK_GROUP_ID ), artifactId( "mx" ), type( "swc" ) );
+        return haloSwc;
     }
 
     public INamespace[] getNamespace()
@@ -3106,6 +3178,11 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
         return swcChecksum;
     }
 
+    public Integer getSwfVersion()
+    {
+        return swfVersion;
+    }
+
     public String getTargetPlayer()
     {
         return targetPlayer;
@@ -3115,18 +3192,27 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
     public List<String> getTheme()
     {
         List<File> themes = new ArrayList<File>();
+        Set<Artifact> themeDependencies = getDependencies( anyOf( type( SWC ), type( CSS ) ), scope( THEME ) );
+        themes.addAll( asList( MavenUtils.getFiles( themeDependencies ) ) );
+
+        // if themes are specified in the <themes> configuration
         if ( this.themes != null )
         {
             themes.addAll( asList( files( this.themes, getResourcesTargetDirectories() ) ) );
         }
-        themes.addAll(asList(MavenUtils.getFiles(getDependencies(anyOf(type(SWC), type(CSS)), scope(THEME)))));
-
-//        configureThemeSparkCss( themes );
-//        configureThemeHaloSwc( themes );
+        themes.addAll( //
+        asList( MavenUtils.getFiles( getDependencies( anyOf( type( SWC ), type( CSS ) ),//
+                                                      scope( THEME ) ) ) ) );
 
         if ( themes.isEmpty() )
         {
-            return Collections.EMPTY_LIST;
+            /*getLog().warn( "No themes are explicitly defined in the <theme> section or in any scope=\"theme\" dependencies. "
+                               + "Flexmojos is now attempting to figure out which themes to include. (to avoid this warning "
+                               + "you should explicitly state your theme dependencies)" );
+
+            configureThemeSparkCss( themes );
+            configureThemeHaloSwc( themes );*/
+          return Collections.EMPTY_LIST;
         }
 
         return pathsList( themes );
@@ -3157,6 +3243,16 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
     public String getTranslationFormat()
     {
         return translationFormat;
+    }
+
+    public Boolean getUseDirectBlit()
+    {
+        return useDirectBlit;
+    }
+
+    public Boolean getUseGpu()
+    {
+        return useGpu;
     }
 
     public Boolean getUseNetwork()
@@ -3449,6 +3545,46 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
 
         // nothing new was found.
         return required;
+    }
+
+    @SuppressWarnings( "unchecked" )
+    private File resolveThemeFile( String artifactName, String themeName, String type, String path )
+    {
+        Artifact sparkSwc = getDependency( groupId( FRAMEWORK_GROUP_ID ), artifactId( artifactName ), type( "swc" ) );
+        if ( sparkSwc == null )
+        {
+            return null;
+        }
+
+        File sparkCss;
+        try
+        {
+            // first try to get the artifact from maven local repository for the appropriated flex version
+            sparkCss = resolve( FRAMEWORK_GROUP_ID, themeName, getFrameworkVersion(), "theme", type ).getFile();
+        }
+        catch ( RuntimeMavenResolutionException e )
+        {
+            // then try to get it from framework-config.zip
+            File dir = getUnpackedFrameworkConfig();
+            sparkCss = new File( dir, "themes/" + path + "/" + themeName + "." + type );
+
+            // if not possible get it from flexmojos jar
+            if ( !sparkCss.exists() )
+            {
+                sparkCss = new File( getOutputDirectory(), themeName + "." + type );
+                sparkCss.getParentFile().mkdirs();
+                try
+                {
+                    FileUtils.copyURLToFile( MavenUtils.class.getResource( "/themes/" + themeName + "." + type ),
+                                             sparkCss );
+                }
+                catch ( IOException ioE )
+                {
+                    throw new MavenRuntimeException( "Error copying " + themeName + "." + type + " file.", ioE );
+                }
+            }
+        }
+        return sparkCss;
     }
 
     public void versionCheck()

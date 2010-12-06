@@ -34,8 +34,8 @@
       <url>http://flyti.org:8081/content/repositories/thirdparty</url>
     </repository>
     <snapshotRepository>
-      <id>forge-snapshots</id>
-      <url>${flexSnapshotUrl}</url>
+      <id>ossrh</id>
+      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
     </snapshotRepository>
   </distributionManagement>
 
@@ -50,7 +50,7 @@
   <properties>
     <commons_io.version>1.4</commons_io.version>
     <flex.sdk.version>4.5.0.18365</flex.sdk.version>
-    <maven.version>3.0</maven.version>
+    <maven.version>3.0.1</maven.version>
     <maven-site-plugin.version>3.0-beta-3</maven-site-plugin.version>
     <plexus.version>1.5.4</plexus.version>
     <apparat.version>1.0.RC8</apparat.version>
@@ -62,9 +62,9 @@
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>aspectj-maven-plugin</artifactId>
-          <version>1.2</version>
+          <version>1.4-SONATYPE-13219</version>
           <configuration>
-            <complianceLevel>1.5</complianceLevel>
+            <complianceLevel>1.6</complianceLevel>
           </configuration>
         </plugin>
         <plugin>
@@ -145,7 +145,7 @@
               <artifactItem>
                 <groupId>com.adobe</groupId>
                 <artifactId>flashplayer</artifactId>
-                <version>10.1</version>
+                <version>10.2</version>
                 <packaging>exe</packaging>
                 <downloadUrl>http://download.macromedia.com/pub/flashplayer/updaters/10/flashplayer_10_sa_debug.exe</downloadUrl>
               </artifactItem>
@@ -159,7 +159,7 @@
               <artifactItem>
                 <groupId>com.adobe</groupId>
                 <artifactId>flashplayer</artifactId>
-                <version>10.1</version>
+                <version>10.2</version>
                 <classifier>linux</classifier>
                 <packaging>uexe</packaging>
                 <downloadUrl>http://download.macromedia.com/pub/flashplayer/updaters/10/flashplayer_10_sa_debug.tar.gz</downloadUrl>
@@ -177,7 +177,7 @@
               <artifactItem>
                 <groupId>com.adobe</groupId>
                 <artifactId>adl</artifactId>
-                <version>2.0</version>
+                <version>2.5</version>
                 <packaging>exe</packaging>
                 <downloadUrl>http://airdownload.adobe.com/air/win/download/latest/AdobeAIRSDK.zip</downloadUrl>
                 <extractFile>bin/adl.exe</extractFile>
@@ -185,7 +185,7 @@
               <artifactItem>
                 <groupId>com.adobe.adl</groupId>
                 <artifactId>runtime</artifactId>
-                <version>2.0</version>
+                <version>2.5</version>
                 <packaging>zip</packaging>
                 <downloadUrl>http://airdownload.adobe.com/air/win/download/latest/AdobeAIRSDK.zip</downloadUrl>
                 <extractFile>runtimes/air/win</extractFile>
@@ -194,7 +194,7 @@
               <artifactItem>
                 <groupId>com.adobe.adl</groupId>
                 <artifactId>nai</artifactId>
-                <version>2.0</version>
+                <version>2.5</version>
                 <packaging>zip</packaging>
                 <downloadUrl>http://airdownload.adobe.com/air/win/download/latest/AdobeAIRSDK.zip</downloadUrl>
                 <extractFile>lib/nai</extractFile>
@@ -203,7 +203,7 @@
               <artifactItem>
                 <groupId>com.adobe</groupId>
                 <artifactId>adl</artifactId>
-                <version>2.0</version>
+                <version>2.5</version>
                 <classifier>linux</classifier>
                 <packaging>uexe</packaging>
                 <downloadUrl>http://airdownload.adobe.com/air/lin/download/latest/AdobeAIRSDK.tbz2</downloadUrl>
@@ -212,7 +212,7 @@
               <artifactItem>
                 <groupId>com.adobe.adl</groupId>
                 <artifactId>runtime</artifactId>
-                <version>2.0</version>
+                <version>2.5</version>
                 <classifier>linux</classifier>
                 <packaging>tar.gz</packaging>
                 <downloadUrl>http://airdownload.adobe.com/air/lin/download/latest/AdobeAIRSDK.tbz2</downloadUrl>
@@ -222,7 +222,7 @@
               <artifactItem>
                 <groupId>com.adobe.adl</groupId>
                 <artifactId>nai</artifactId>
-                <version>2.0</version>
+                <version>2.5</version>
                 <classifier>linux</classifier>
                 <packaging>tar.gz</packaging>
                 <downloadUrl>http://airdownload.adobe.com/air/lin/download/latest/AdobeAIRSDK.tbz2</downloadUrl>
@@ -245,7 +245,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-enforcer-plugin</artifactId>
-          <version>1.0-beta-1</version>
+          <version>1.0</version>
         </plugin>
 
         <plugin>
@@ -317,9 +317,9 @@
             <configuration>
               <rules>
                 <bannedDependencies>
-                  <message>junit is banned</message>
                   <excludes>
                     <exclude>junit:junit</exclude>
+                    <exclude>org.hamcrest:hamcrest-all</exclude>
                   </excludes>
                 </bannedDependencies>
               </rules>
@@ -596,7 +596,7 @@
       <dependency>
         <groupId>org.aspectj</groupId>
         <artifactId>aspectjrt</artifactId>
-        <version>1.6.5</version>
+        <version>1.6.10</version>
       </dependency>
       <dependency>
         <groupId>commons-lang</groupId>
@@ -718,6 +718,12 @@
         <groupId>com.googlecode.lambdaj</groupId>
         <artifactId>lambdaj</artifactId>
         <version>2.1</version>
+        <exclusions>
+          <exclusion>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-all</artifactId>
+          </exclusion>
+        </exclusions>
       </dependency>
     </dependencies>
   </dependencyManagement>
