@@ -13,7 +13,7 @@
 
   <groupId>org.sonatype.flexmojos</groupId>
   <artifactId>flexmojos-parent</artifactId>
-  <version>4.0-de1</version>
+  <version>4.0-de2</version>
   <packaging>pom</packaging>
 
   <name>Flexmojos Parent</name>
@@ -322,6 +322,9 @@
                     <exclude>org.hamcrest:hamcrest-all</exclude>
                   </excludes>
                 </bannedDependencies>
+                <requireMavenVersion>
+                  <version>${maven.version}</version>
+                </requireMavenVersion>
               </rules>
             </configuration>
           </execution>

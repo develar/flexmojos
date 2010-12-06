@@ -8,7 +8,7 @@
   <parent>
     <groupId>org.sonatype.flexmojos</groupId>
     <artifactId>flexmojos-parent</artifactId>
-    <version>4.0-de1</version>
+    <version>4.0-SNAPSHOT</version>
     <relativePath>../flexmojos-parent/pom.xml</relativePath>
   </parent>
 
@@ -123,14 +123,14 @@
                   <type>swc</type>
                   <destFileName>framework-4.swc</destFileName>
                 </artifactItem>
-                <!--<artifactItem>
+                <artifactItem>
                   <groupId>com.adobe.flex.framework</groupId>
                   <artifactId>playerglobal</artifactId>
                   <version>${flex.sdk.version}</version>
                   <classifier>10.2</classifier>
                   <type>swc</type>
-                  <destFileName>playerglobal-10-4.swc</destFileName>
-                </artifactItem>-->
+                  <destFileName>playerglobal-10.1-4.swc</destFileName>
+                </artifactItem>
               </artifactItems>
               <outputDirectory>${project.build.testOutputDirectory}/swcs</outputDirectory>
             </configuration>

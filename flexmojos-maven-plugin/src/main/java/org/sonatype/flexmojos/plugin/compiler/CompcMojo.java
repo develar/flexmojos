@@ -287,8 +287,10 @@ public class CompcMojo
         }
         else
         {
+            // process patterns
             patterns.addAll( includeFiles.getPatterns() );
 
+            // process files
             for ( final String path : includeFiles.getIncludes() )
             {
                 final File file = PathUtil.file( path, getResourcesTargetDirectories() );

@@ -9,7 +9,7 @@
   <parent>
     <groupId>org.sonatype.flexmojos</groupId>
     <artifactId>flexmojos-generator</artifactId>
-    <version>4.0-de1</version>
+    <version>4.0-de2</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
 

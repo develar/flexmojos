@@ -1694,7 +1694,7 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
     }
 
     @FlexCompatibility( minVersion = "4.0.0.11420" )
-    private void configureThemeHaloSwc( List<File> themes )
+    private void configureThemeSparkCss( List<File> themes )
     {
         File haloSwc = resolveThemeFile( "mx", "halo", "swc", "Halo" );
         if ( haloSwc == null )
@@ -3200,19 +3200,15 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
         {
             themes.addAll( asList( files( this.themes, getResourcesTargetDirectories() ) ) );
         }
-        themes.addAll( //
-        asList( MavenUtils.getFiles( getDependencies( anyOf( type( SWC ), type( CSS ) ),//
-                                                      scope( THEME ) ) ) ) );
 
         if ( themes.isEmpty() )
         {
-            /*getLog().warn( "No themes are explicitly defined in the <theme> section or in any scope=\"theme\" dependencies. "
+            getLog().warn( "No themes are explicitly defined in the <theme> section or in any scope=\"theme\" dependencies. "
                                + "Flexmojos is now attempting to figure out which themes to include. (to avoid this warning "
                                + "you should explicitly state your theme dependencies)" );
 
             configureThemeSparkCss( themes );
-            configureThemeHaloSwc( themes );*/
-          return Collections.EMPTY_LIST;
+            configureThemeHaloSwc( themes );
         }
 
         return pathsList( themes );
