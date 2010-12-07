@@ -1,9 +1,9 @@
 package org.sonatype.flexmojos.plugin.compiler;
 
-import org.sonatype.flexmojos.compiler.IApplicationDomains;
+//import org.sonatype.flexmojos.compiler.IApplicationDomains;
 
 public class MavenApplicationDomains
-    implements IApplicationDomains
+//    implements IApplicationDomains
 {
 
     private String pathElement;

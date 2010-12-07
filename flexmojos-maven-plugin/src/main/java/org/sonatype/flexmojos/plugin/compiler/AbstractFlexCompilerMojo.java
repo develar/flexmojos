@@ -68,7 +68,7 @@ import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
 import org.hamcrest.Matcher;
 import org.sonatype.flexmojos.compatibilitykit.FlexCompatibility;
 import org.sonatype.flexmojos.compatibilitykit.FlexMojo;
-import org.sonatype.flexmojos.compiler.IApplicationDomains;
+//import org.sonatype.flexmojos.compiler.IApplicationDomains;
 import org.sonatype.flexmojos.compiler.ICompcConfiguration;
 import org.sonatype.flexmojos.compiler.ICompilerConfiguration;
 import org.sonatype.flexmojos.compiler.IDefaultScriptLimits;
@@ -1428,7 +1428,7 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
      * There are three ways a theme can be included when you compile
      * </p>
      * 1 - you explicitly list a <theme> in the config of the pom file<BR>
-     * 2 - You include a dependency with scope="theme" and with type="css" or type="swc"<BR>
+     * 2 - You include a dependency with classsifier="theme" and with type="css" or type="swc"<BR>
      * 3 - if you don't do either of the above steps, flexmojos will attempt to automatically include a theme for you
      * based on your dependencies. (if you depend upon mx.swc halo will be included, if you depend upon spark.swc -
      * spark.css theme will be included)
@@ -1696,19 +1696,6 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
     @FlexCompatibility( minVersion = "4.0.0.11420" )
     private void configureThemeSparkCss( List<File> themes )
     {
-        File haloSwc = resolveThemeFile( "mx", "halo", "swc", "Halo" );
-        if ( haloSwc == null )
-        {
-            return;
-        }
-
-        getLog().warn( "Added the halo.swc theme because mx.swc was included as a dependency" );
-        themes.add( haloSwc );
-    }
-
-    @FlexCompatibility( minVersion = "4.0.0.11420" )
-    private void configureThemeSparkCss( List<File> themes )
-    {
         File sparkCss = resolveThemeFile( "spark", "spark", "css", "Spark" );
         if ( sparkCss == null )
         {
@@ -1808,10 +1795,10 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
         return allowSourcePathOverlap;
     }
 
-    public IApplicationDomains[] getApplicationDomains()
-    {
-        return this.applicationDomains;
-    }
+//    public IApplicationDomains[] getApplicationDomains()
+//    {
+//        return this.applicationDomains;
+//    }
 
     public Boolean getArchiveClassesAndAssets()
     {
@@ -3192,7 +3179,7 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
     public List<String> getTheme()
     {
         List<File> themes = new ArrayList<File>();
-        Set<Artifact> themeDependencies = getDependencies( anyOf( type( SWC ), type( CSS ) ), scope( THEME ) );
+        Set<Artifact> themeDependencies = getDependencies( anyOf( type( SWC ), type( CSS ) ), classifier( THEME ) );
         themes.addAll( asList( MavenUtils.getFiles( themeDependencies ) ) );
 
         // if themes are specified in the <themes> configuration
@@ -3203,12 +3190,13 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
 
         if ( themes.isEmpty() )
         {
-            getLog().warn( "No themes are explicitly defined in the <theme> section or in any scope=\"theme\" dependencies. "
-                               + "Flexmojos is now attempting to figure out which themes to include. (to avoid this warning "
-                               + "you should explicitly state your theme dependencies)" );
-
-            configureThemeSparkCss( themes );
-            configureThemeHaloSwc( themes );
+//            getLog().warn( "No themes are explicitly defined in the <theme> section or in any scope=\"theme\" dependencies. "
+//                               + "Flexmojos is now attempting to figure out which themes to include. (to avoid this warning "
+//                               + "you should explicitly state your theme dependencies)" );
+//
+//            configureThemeSparkCss( themes );
+//            configureThemeHaloSwc( themes );
+          return Collections.EMPTY_LIST;
         }
 
         return pathsList( themes );

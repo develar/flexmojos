@@ -8,7 +8,7 @@
   <parent>
     <groupId>org.sonatype.flexmojos</groupId>
     <artifactId>flexmojos-parent</artifactId>
-    <version>4.0-SNAPSHOT</version>
+    <version>4.0-de2</version>
     <relativePath>../flexmojos-parent/pom.xml</relativePath>
   </parent>
 
@@ -123,14 +123,14 @@
                   <type>swc</type>
                   <destFileName>framework-4.swc</destFileName>
                 </artifactItem>
-                <artifactItem>
-                  <groupId>com.adobe.flex.framework</groupId>
-                  <artifactId>playerglobal</artifactId>
-                  <version>${flex.sdk.version}</version>
-                  <classifier>10.2</classifier>
-                  <type>swc</type>
-                  <destFileName>playerglobal-10.1-4.swc</destFileName>
-                </artifactItem>
+                <!--<artifactItem>-->
+                  <!--<groupId>com.adobe.flex.framework</groupId>-->
+                  <!--<artifactId>playerglobal</artifactId>-->
+                  <!--<version>${flex.sdk.version}</version>-->
+                  <!--<classifier>10.2</classifier>-->
+                  <!--<type>swc</type>-->
+                  <!--<destFileName>playerglobal-10.1-4.swc</destFileName>-->
+                <!--</artifactItem>-->
               </artifactItems>
               <outputDirectory>${project.build.testOutputDirectory}/swcs</outputDirectory>
             </configuration>
@@ -138,27 +138,27 @@
         </executions>
       </plugin>
 
-      <plugin>
-        <groupId>org.sonatype.plugins</groupId>
-        <artifactId>tattletale-maven-plugin</artifactId>
-        <version>1.0</version>
-        <executions>
-          <execution>
-            <goals>
-              <goal>tattletale-dependencies</goal>
-            </goals>
-            <configuration>
-              <includeRtJar>true</includeRtJar>
-              <profiles>
-                <profile>java6</profile>
-              </profiles>
-              <reports>
-                <report>multiplejars</report>
-              </reports>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
+      <!--<plugin>-->
+        <!--<groupId>org.sonatype.plugins</groupId>-->
+        <!--<artifactId>tattletale-maven-plugin</artifactId>-->
+        <!--<version>1.0</version>-->
+        <!--<executions>-->
+          <!--<execution>-->
+            <!--<goals>-->
+              <!--<goal>tattletale-dependencies</goal>-->
+            <!--</goals>-->
+            <!--<configuration>-->
+              <!--<includeRtJar>true</includeRtJar>-->
+              <!--<profiles>-->
+                <!--<profile>java6</profile>-->
+              <!--</profiles>-->
+              <!--<reports>-->
+                <!--<report>multiplejars</report>-->
+              <!--</reports>-->
+            <!--</configuration>-->
+          <!--</execution>-->
+        <!--</executions>-->
+      <!--</plugin>-->
     </plugins>
   </build>
 

@@ -97,6 +97,10 @@ public class DefaultFlexCompilerArgumentParser
                 continue;
             }
 
+          if (method.getName().equals("getFixedLiteralVector") && !((Boolean) value)) {
+            continue;
+          }
+
             Class<?> returnType = method.getReturnType();
 
             String name = parseName( method.getName() );
