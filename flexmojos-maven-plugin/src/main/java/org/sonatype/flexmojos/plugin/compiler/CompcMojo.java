@@ -39,6 +39,7 @@ import org.sonatype.flexmojos.util.PathUtil;
  * @configurator flexmojos
  * @threadSafe
  */
+@SuppressWarnings({"UnusedDeclaration", "MismatchedReadAndWriteOfArray"})
 public class CompcMojo
     extends AbstractFlexCompilerMojo<ICompcConfiguration, CompcMojo>
     implements ICompcConfiguration, Mojo
