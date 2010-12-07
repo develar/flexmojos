@@ -2099,7 +2099,7 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
     @SuppressWarnings( "unchecked" )
     public File[] getExternalLibraryPath()
     {
-        if ( SWC.equals( getProjectType() ) )
+        if ( SWC.equals( getProjectType() ) || (defaultScope != null && defaultScope.equals(EXTERNAL)) )
         {
             Matcher<? extends Artifact> swcs =
                 allOf( type( SWC ), //
@@ -2311,7 +2311,7 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
     {
         Collection<Artifact> resourceBundle =
             includeResourceBundle ? getCompiledResouceBundles() : Collections.EMPTY_LIST;
-        if ( SWC.equals( getProjectType() ) )
+        if ( SWC.equals( getProjectType() ) || (defaultScope != null && defaultScope.equals(EXTERNAL)))
         {
             return MavenUtils.getFiles( getDependencies( type( SWC ), scope( MERGED ), not( GLOBAL_MATCHER ) ),
                                         resourceBundle );
@@ -3392,6 +3392,11 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
    * @parameter
    */
   private Manifest[] manifests;
+
+  /**
+   * @parameter
+   */
+  private String defaultScope;
 
   protected MavenNamespace[] generatedNamespaces;
 

@@ -6,12 +6,12 @@
   <parent>
     <artifactId>flexmojos-sandbox</artifactId>
     <groupId>org.sonatype.flexmojos</groupId>
-    <version>4.0-de2</version>
+    <version>4.0-de3</version>
   </parent>
 
   <groupId>org.sonatype.flexmojos</groupId>
   <artifactId>flexmojos-nexus-plugin</artifactId>
-  <version>4.0-de2</version>
+  <version>4.0-de3</version>
 
   <packaging>nexus-plugin</packaging>
 

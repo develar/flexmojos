@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.sonatype.flexmojos</groupId>
     <artifactId>flexmojos-parent</artifactId>
-    <version>4.0-de2</version>
+    <version>4.0-de3</version>
     <relativePath>../flexmojos-parent/pom.xml</relativePath>
   </parent>
 
