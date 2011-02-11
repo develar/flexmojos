@@ -8,7 +8,7 @@
   <parent>
   <groupId>org.sonatype.flexmojos</groupId>
   <artifactId>flexmojos-parent</artifactId>
-  <version>4.0-de3</version>
+  <version>4.0-de4</version>
   <relativePath>flexmojos-parent/pom.xml</relativePath>
   </parent>
 
@@ -166,5 +166,11 @@
       </build>
     </profile>
   </profiles>
+
+  <scm>
+    <connection>scm:git:git://github.com/Flexmojos/flexmojos.git</connection>
+    <developerConnection>scm:git:git@github.com:Flexmojos/flexmojos.git</developerConnection>
+    <url>http://github.com/Flexmojos/flexmojos</url>
+  </scm>
 
 </project>

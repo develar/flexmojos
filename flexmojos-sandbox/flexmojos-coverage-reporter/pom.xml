@@ -3,7 +3,7 @@
   <parent>
     <groupId>org.sonatype.flexmojos</groupId>
     <artifactId>flexmojos-sandbox</artifactId>
-    <version>4.0-de3</version>
+    <version>4.0-de4</version>
   </parent>
 
   <artifactId>flexmojos-coverage-reporter</artifactId>

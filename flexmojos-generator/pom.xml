@@ -11,7 +11,7 @@
   <parent>
     <artifactId>flexmojos-parent</artifactId>
     <groupId>org.sonatype.flexmojos</groupId>
-    <version>4.0-de3</version>
+    <version>4.0-de4</version>
     <relativePath>../flexmojos-parent/pom.xml</relativePath>
   </parent>
 

@@ -9,7 +9,7 @@
   <parent>
     <groupId>org.sonatype.flexmojos</groupId>
     <artifactId>flexmojos-testing</artifactId>
-    <version>4.0-de3</version>
+    <version>4.0-de4</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
 
@@ -140,13 +140,13 @@
             <xml>net.sourceforge.cobertura:cobertura:1.9.4.1</xml>
 
             <xml>com.adobe:flashplayer:9.0:exe</xml>
-            <xml>com.adobe:flashplayer:10.1:exe</xml>
+            <xml>com.adobe:flashplayer:10.2:exe</xml>
             <xml>com.adobe:adl:2.5:exe</xml>
             <xml>com.adobe.adl:nai:2.5:zip</xml>
             <xml>com.adobe.adl:runtime:2.5:zip</xml>
 
             <xml>com.adobe:flashplayer:9.0:uexe:linux</xml>
-            <xml>com.adobe:flashplayer:10.1:uexe:linux</xml>
+            <xml>com.adobe:flashplayer:10.2:uexe:linux</xml>
             <xml>com.adobe:adl:2.5:uexe:linux</xml>
             <xml>com.adobe.adl:nai:2.5:tar.gz:linux</xml>
             <xml>com.adobe.adl:runtime:2.5:tar.gz:linux</xml>
@@ -240,6 +240,7 @@
       <plugin>
         <groupId>org.scala-tools</groupId>
         <artifactId>maven-scala-plugin</artifactId>
+        <version>2.14</version>
         <executions>
           <execution>
           <phase>generate-test-sources</phase>

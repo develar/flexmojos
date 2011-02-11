@@ -20,6 +20,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.security.KeyStore;
 import java.security.PrivateKey;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -32,7 +33,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.transform.SnapshotTransformation;
 import org.apache.maven.model.FileSet;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -381,8 +381,7 @@ public class SignAirMojo
         String version;
         if ( project.getArtifact().isSnapshot() )
         {
-            String timestamp = SnapshotTransformation.getUtcDateFormatter().format( new Date() );
-            version = project.getVersion().replace( "SNAPSHOT", timestamp );
+            version = project.getVersion().replace( "SNAPSHOT", new SimpleDateFormat( "yyyyMMdd.HHmmss" ).format( new Date() ) );
         }
         else
         {

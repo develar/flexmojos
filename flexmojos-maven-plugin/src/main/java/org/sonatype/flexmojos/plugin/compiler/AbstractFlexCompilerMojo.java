@@ -26,7 +26,6 @@ import static org.sonatype.flexmojos.plugin.common.FlexScopes.EXTERNAL;
 import static org.sonatype.flexmojos.plugin.common.FlexScopes.INTERNAL;
 import static org.sonatype.flexmojos.plugin.common.FlexScopes.MERGED;
 import static org.sonatype.flexmojos.plugin.common.FlexScopes.RSL;
-import static org.sonatype.flexmojos.plugin.common.FlexScopes.THEME;
 import static org.sonatype.flexmojos.util.PathUtil.files;
 import static org.sonatype.flexmojos.util.PathUtil.pathsList;
 
@@ -91,6 +90,7 @@ import org.sonatype.flexmojos.compiler.command.Result;
 import org.sonatype.flexmojos.license.LicenseCalculator;
 import org.sonatype.flexmojos.plugin.AbstractMavenMojo;
 import org.sonatype.flexmojos.plugin.RuntimeMavenResolutionException;
+import org.sonatype.flexmojos.plugin.common.FlexScopes;
 import org.sonatype.flexmojos.plugin.compiler.attributes.MavenArtifact;
 import org.sonatype.flexmojos.plugin.compiler.attributes.MavenDefaultScriptLimits;
 import org.sonatype.flexmojos.plugin.compiler.attributes.MavenDefaultSize;
@@ -114,6 +114,8 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
 {
 
     private static final Object lock = new Object();
+
+    public static final String PROJECT_TYPE = "getProjectType";
 
     /**
      * Generate an accessible SWF
@@ -1526,7 +1528,7 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
         return paths;
     }
 
-    @SuppressWarnings( "unchecked" )
+    @SuppressWarnings({"unchecked", "CloneDoesntDeclareCloneNotSupportedException"})
     @Override
     public C clone() {
         try
@@ -1584,7 +1586,7 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
 
         if ( localesOutputPath != null )
         {
-            cfg.getCache().put( "getTargetDirectory", new File( getTargetDirectory(), localesOutputPath ) );
+            cfg.getCache().put( TARGET_DIRECTORY, new File( getTargetDirectory(), localesOutputPath ) );
         }
     }
 
@@ -2948,7 +2950,7 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
     public List<String> getTheme()
     {
         List<File> themes = new ArrayList<File>();
-        Set<Artifact> themeDependencies = getDependencies( anyOf( type( SWC ), type( CSS ) ), classifier(THEME) );
+        Set<Artifact> themeDependencies = getDependencies( anyOf( type( SWC ), type( CSS ) ), classifier(FlexScopes.THEME) );
         themes.addAll( asList( MavenUtils.getFiles( themeDependencies ) ) );
 
         // if themes are specified in the <themes> configuration

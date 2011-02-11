@@ -9,12 +9,12 @@
   <parent>
     <groupId>org.sonatype.flexmojos</groupId>
     <artifactId>flexmojos-unittest</artifactId>
-    <version>4.0-de3</version>
+    <version>4.0-de4</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
 
   <artifactId>flexmojos-unittest-support</artifactId>
-  <version>4.0-de3</version>
+  <version>4.0-de4</version>
   <packaging>swc</packaging>
 
   <name>Flexmojos Unit Test support</name>

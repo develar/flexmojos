@@ -1,5 +1,6 @@
 package org.sonatype.flexmojos.plugin.compiler;
 
+import static org.sonatype.flexmojos.util.CollectionUtils.*;
 import static org.sonatype.flexmojos.plugin.common.FlexExtension.SWF;
 import static org.sonatype.flexmojos.util.PathUtil.file;
 
@@ -16,6 +17,7 @@ import org.sonatype.flexmojos.compiler.ICommandLineConfiguration;
 import org.sonatype.flexmojos.compiler.MxmlcConfigurationHolder;
 import org.sonatype.flexmojos.compiler.command.Result;
 import org.sonatype.flexmojos.plugin.compiler.attributes.converter.Module;
+import org.sonatype.flexmojos.plugin.utilities.MavenUtils;
 import org.sonatype.flexmojos.plugin.utilities.SourceFileResolver;
 import org.sonatype.flexmojos.truster.FlashPlayerTruster;
 import org.sonatype.flexmojos.util.PathUtil;
@@ -198,7 +200,6 @@ public class MxmlcMojo
                     moduleOutputDir = new File( project.getBuild().getDirectory() );
                 }
 
-                // TODO include the original extern
                 List<String> loadExterns = new ArrayList<String>();
                 loadExterns.add( getLinkReport() );
                 if ( getLoadExterns() != null )
@@ -210,10 +211,19 @@ public class MxmlcMojo
                 cfg.classifier = classifier;
                 cfg.targetDirectory = moduleOutputDir;
                 cfg.finalName = moduleFinalName;
-                if ( module.isOptimize() )
-                {
-                    cfg.getCache().put( "getLoadExterns", loadExterns.toArray( new String[1] ) );
-                }
+//                if ( module.isOptimize() )
+//                {
+//                    cfg.getCache().put( LOAD_EXTERNS, loadExterns.toArray( new String[1] ) );
+//                }
+//                cfg.getCache().put( RUNTIME_SHARED_LIBRARY_PATH, null );
+//                cfg.getCache().put( INCLUDE_LIBRARIES, null );
+//                cfg.getCache().put( EXTERNAL_LIBRARY_PATH,
+//                                    MavenUtils.getFiles(getDependencies(not(GLOBAL_MATCHER),//
+//                                            allOf(type(SWC),//
+//                                                    anyOf(scope(EXTERNAL),
+//                                                            scope(CACHING), scope(RSL),
+//                                                            scope(INTERNAL)))),
+//                                            getGlobalArtifact()) );
                 results.add( executeCompiler( new MxmlcConfigurationHolder( cfg, moduleSource ), fullSynchronization ) );
             }
 

@@ -100,9 +100,10 @@ public class ConfigurationMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
-      if (!(packaging.equals(SWC) || packaging.equals(SWF))) {
-        return;
-      }
+        if ( !( packaging.equals( SWC ) || packaging.equals( SWF ) ) )
+        {
+            return;
+        }
 
         Configurator cfg = configurators.get( configurator );
         if ( cfg == null )

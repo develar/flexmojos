@@ -8,12 +8,11 @@
   <parent>
     <groupId>org.sonatype.flexmojos</groupId>
     <artifactId>flexmojos-parent</artifactId>
-    <version>4.0-de3</version>
+    <version>4.0-de4</version>
     <relativePath>../flexmojos-parent/pom.xml</relativePath>
   </parent>
 
   <artifactId>flexmojos-maven-plugin</artifactId>
-  <version>4.0-de3.1</version>
 
   <packaging>maven-plugin</packaging>
 
@@ -139,27 +138,27 @@
         </executions>
       </plugin>
 
-      <!--<plugin>-->
-        <!--<groupId>org.sonatype.plugins</groupId>-->
-        <!--<artifactId>tattletale-maven-plugin</artifactId>-->
-        <!--<version>1.0</version>-->
-        <!--<executions>-->
-          <!--<execution>-->
-            <!--<goals>-->
-              <!--<goal>tattletale-dependencies</goal>-->
-            <!--</goals>-->
-            <!--<configuration>-->
-              <!--<includeRtJar>true</includeRtJar>-->
-              <!--<profiles>-->
-                <!--<profile>java6</profile>-->
-              <!--</profiles>-->
-              <!--<reports>-->
-                <!--<report>multiplejars</report>-->
-              <!--</reports>-->
-            <!--</configuration>-->
-          <!--</execution>-->
-        <!--</executions>-->
-      <!--</plugin>-->
+      <!--<plugin>
+        <groupId>org.sonatype.plugins</groupId>
+        <artifactId>tattletale-maven-plugin</artifactId>
+        <version>1.0</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>tattletale-dependencies</goal>
+            </goals>
+            <configuration>
+              <includeRtJar>true</includeRtJar>
+              <profiles>
+                <profile>java6</profile>
+              </profiles>
+              <reports>
+                <report>multiplejars</report>
+              </reports>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>-->
     </plugins>
   </build>
 
@@ -167,7 +166,7 @@
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>flexmojos-threadlocaltoolkit-wrapper</artifactId>
-      <version>4.0-de3</version>
+      <version>${project.version}</version>
     </dependency>
 
     <dependency>
@@ -182,37 +181,37 @@
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>flexmojos-flex-compiler</artifactId>
-      <version>4.0-de3</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>flexmojos-configurator</artifactId>
-      <version>4.0-de3</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>flexmojos-generator-api</artifactId>
-      <version>4.0-de3</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>flexmojos-generator-graniteds-2.2.0</artifactId>
-      <version>4.0-de3</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>flexmojos-generator-constraints</artifactId>
-      <version>4.0-de3</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>flexmojos-coverage-reporter</artifactId>
-      <version>4.0-de3</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>flexmojos-generator-mojo</artifactId>
-      <version>4.0-de3</version>
+      <version>${project.version}</version>
       <type>maven-plugin</type>
     </dependency>
 
@@ -287,7 +286,7 @@
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>flexmojos-tester</artifactId>
-      <version>4.0-de3</version>
+      <version>${project.version}</version>
     </dependency>
 
     <dependency>
@@ -414,7 +413,7 @@
                   <goal>upload-file</goal>
                 </goals>
                 <configuration>
-                  <repositoryPath>flexmojos/4.0-de3</repositoryPath>
+                  <repositoryPath>flexmojos/${project.version}</repositoryPath>
                 </configuration>
               </execution>
               <execution>
@@ -431,7 +430,7 @@
             <configuration>
               <serverId>rso</serverId>
               <repositoryUrl>http://repository.sonatype.org/service/local/repositories/maven-sites/content-compressed</repositoryUrl>
-              <file>target/${project.artifactId}-4.0-de3-site.jar</file>
+              <file>target/${project.artifactId}-${project.version}-site.jar</file>
             </configuration>
           </plugin>
         </plugins>

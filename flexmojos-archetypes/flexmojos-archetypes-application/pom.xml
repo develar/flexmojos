@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.sonatype.flexmojos</groupId>
     <artifactId>flexmojos-archetypes</artifactId>
-    <version>4.0-de3</version>
+    <version>4.0-de4</version>
   </parent>
 
   <artifactId>flexmojos-archetypes-application</artifactId>
