@@ -27,7 +27,7 @@ public class VersionUtilsTest
         Assert.assertTrue( Arrays.equals( new int[] { 3, 1 }, splitVersion( "3.1" ) ) );
         Assert.assertTrue( Arrays.equals( new int[] { 4 }, splitVersion( "4" ) ) );
         Assert.assertTrue( Arrays.equals( new int[] { 3, 0, 1, 1092 }, splitVersion( "3.0.1.1092-flexcover" ) ) );
-        Assert.assertTrue( Arrays.equals( new int[] { 4, 0 }, splitVersion( "4.0-SNAPSHOT" ) ) );
+        Assert.assertTrue( Arrays.equals( new int[] { 4, 0 }, splitVersion( "4.0-de5" ) ) );
     }
 
     @Test

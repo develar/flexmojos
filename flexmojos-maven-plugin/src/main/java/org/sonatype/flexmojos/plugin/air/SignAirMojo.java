@@ -1,17 +1,8 @@
 package org.sonatype.flexmojos.plugin.air;
 
 import static org.sonatype.flexmojos.plugin.common.FlexExtension.AIR;
-import static org.sonatype.flexmojos.plugin.common.FlexExtension.AIRN;
-import static org.sonatype.flexmojos.plugin.common.FlexExtension.ANE;
-import static org.sonatype.flexmojos.plugin.common.FlexExtension.APK;
-import static org.sonatype.flexmojos.plugin.common.FlexExtension.DEB;
-import static org.sonatype.flexmojos.plugin.common.FlexExtension.DMG;
-import static org.sonatype.flexmojos.plugin.common.FlexExtension.EXE;
-import static org.sonatype.flexmojos.plugin.common.FlexExtension.RPM;
 import static org.sonatype.flexmojos.plugin.common.FlexExtension.SWC;
 import static org.sonatype.flexmojos.plugin.common.FlexExtension.SWF;
-import static org.sonatype.flexmojos.plugin.common.FlexExtension.TAR_GZ;
-import static org.sonatype.flexmojos.plugin.common.FlexExtension.ZIP;
 import static org.sonatype.flexmojos.util.PathUtil.file;
 import static org.sonatype.flexmojos.util.PathUtil.path;
 
@@ -20,16 +11,14 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.security.KeyStore;
 import java.security.PrivateKey;
+import java.security.cert.Certificate;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
@@ -42,14 +31,7 @@ import org.apache.maven.project.MavenProjectHelper;
 import org.codehaus.plexus.util.DirectoryScanner;
 import org.codehaus.plexus.util.FileUtils;
 import org.sonatype.flexmojos.plugin.AbstractMavenMojo;
-import org.sonatype.flexmojos.plugin.air.packager.FlexmojosAIRNPackager;
 import org.sonatype.flexmojos.plugin.air.packager.FlexmojosAIRPackager;
-import org.sonatype.flexmojos.plugin.air.packager.FlexmojosANEPackager;
-import org.sonatype.flexmojos.plugin.air.packager.FlexmojosAPKPackager;
-import org.sonatype.flexmojos.plugin.air.packager.FlexmojosDEBPackager;
-import org.sonatype.flexmojos.plugin.air.packager.FlexmojosDMGPackager;
-import org.sonatype.flexmojos.plugin.air.packager.FlexmojosEXEPackager;
-import org.sonatype.flexmojos.plugin.air.packager.FlexmojosRPMPackager;
 import org.sonatype.flexmojos.plugin.air.packager.IPackager;
 import org.sonatype.flexmojos.plugin.utilities.FileInterpolationUtil;
 import org.sonatype.flexmojos.util.PathUtil;
@@ -113,15 +95,6 @@ public class SignAirMojo
      * @parameter default-value="${basedir}/src/main/resources/sign.p12"
      */
     private File keystore;
-
-    /**
-     * Valid values: 'air', 'dmg', 'exe', 'rpm' and 'deb'
-     * <p>
-     * Default-value = 'air'
-     * 
-     * @parameter
-     */
-    private List<String> packages = Arrays.asList( AIR );
 
     /**
      * @parameter expression="${project}"
@@ -206,7 +179,7 @@ public class SignAirMojo
         }
     }
 
-    private void doPackage( String packagerName, IPackager packager )
+    protected void doPackage( String packagerName, IPackager packager )
         throws MojoExecutionException
     {
         try
@@ -214,7 +187,8 @@ public class SignAirMojo
             KeyStore keyStore = KeyStore.getInstance( storetype );
             keyStore.load( new FileInputStream( keystore.getAbsolutePath() ), storepass.toCharArray() );
             String alias = keyStore.aliases().nextElement();
-            packager.setPrivateKey( (PrivateKey) keyStore.getKey( alias, storepass.toCharArray() ) );
+            PrivateKey key = (PrivateKey) keyStore.getKey( alias, storepass.toCharArray() );
+            packager.setPrivateKey( key );
 
             String c = this.classifier == null ? "" : "-" + this.classifier;
             File output =
@@ -222,8 +196,10 @@ public class SignAirMojo
             packager.setOutput( output );
             packager.setDescriptor( getAirDescriptor() );
 
-            packager.setSignerCertificate( keyStore.getCertificate( alias ) );
-            packager.setCertificateChain( keyStore.getCertificateChain( alias ) );
+            Certificate certificate = keyStore.getCertificate( alias );
+            packager.setSignerCertificate( certificate );
+            Certificate[] certificateChain = keyStore.getCertificateChain( alias );
+            packager.setCertificateChain( certificateChain );
             if ( this.timestampURL != null )
             {
                 packager.setTimestampURL( TIMESTAMP_NONE.equals( this.timestampURL ) ? null : this.timestampURL );
@@ -366,11 +342,7 @@ public class SignAirMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
-        Map<String, IPackager> packagers = getPackagers();
-        for ( Entry<String, IPackager> packager : packagers.entrySet() )
-        {
-            doPackage( packager.getKey(), packager.getValue() );
-        }
+        doPackage( AIR, new FlexmojosAIRPackager() );
     }
 
     private File getAirDescriptor()
@@ -381,7 +353,8 @@ public class SignAirMojo
         String version;
         if ( project.getArtifact().isSnapshot() )
         {
-            version = project.getVersion().replace( "SNAPSHOT", new SimpleDateFormat( "yyyyMMdd.HHmmss" ).format( new Date() ) );
+            version =
+                project.getVersion().replace( "SNAPSHOT", new SimpleDateFormat( "yyyyMMdd.HHmmss" ).format( new Date() ) );
         }
         else
         {
@@ -418,17 +391,6 @@ public class SignAirMojo
         return dest;
     }
 
-    protected File getRuntimeDir( String classifier, String type )
-    {
-        return getUnpackedArtifact( "com.adobe.adl", "runtime", getAirTarget(), classifier, type );
-    }
-
-    private File getNaiDir( String classifier, String type )
-        throws MojoExecutionException
-    {
-        return getUnpackedArtifact( "com.adobe.adl", "nai", getAirTarget(), classifier, type );
-    }
-
     private File getOutput()
     {
         File output = null;
@@ -456,59 +418,6 @@ public class SignAirMojo
             output = project.getArtifact().getFile();
         }
         return output;
-    }
-
-    private Map<String, IPackager> getPackagers()
-        throws MojoExecutionException
-    {
-        getLog().info( "Creating the following packagers: " + packages.toString() );
-
-        Map<String, IPackager> packs = new LinkedHashMap<String, IPackager>();
-        if ( packages.contains( AIR ) )
-        {
-            packs.put( AIR, new FlexmojosAIRPackager() );
-        }
-        if ( packages.contains( DMG ) )
-        {
-            packs.put( DMG, new FlexmojosDMGPackager( getNaiDir( "mac", TAR_GZ ), getRuntimeDir( "mac", TAR_GZ ) ) );
-        }
-        if ( packages.contains( EXE ) )
-        {
-            packs.put( EXE, new FlexmojosEXEPackager( getNaiDir( null, ZIP ), getRuntimeDir( null, ZIP ) ) );
-        }
-        if ( packages.contains( RPM ) )
-        {
-            packs.put( RPM, new FlexmojosRPMPackager( getNaiDir( "linux", TAR_GZ ), getRuntimeDir( "linux", TAR_GZ ) ) );
-        }
-        if ( packages.contains( DEB ) )
-        {
-            packs.put( DEB, new FlexmojosDEBPackager( getNaiDir( "linux", TAR_GZ ), getRuntimeDir( "linux", TAR_GZ ) ) );
-        }
-        if ( packages.contains( APK ) )
-        {
-            packs.put( APK, new FlexmojosAPKPackager() );
-        }
-        if ( packages.contains( AIRN ) )
-        {
-            packs.put( AIRN, new FlexmojosAIRNPackager() );
-        }
-        if ( packages.contains( ANE ) )
-        {
-            packs.put( ANE, new FlexmojosANEPackager() );
-        }
-
-        if ( packages.size() != packs.size() )
-        {
-            getLog().error( "Invalid package found, valid values are: 'air', 'dmg', 'exe', 'rpm' and 'deb', but got "
-                                + packages.toString() );
-        }
-
-        if ( packs.isEmpty() )
-        {
-            getLog().debug( "Packagers is empty or contains invalid packagers, using AIR" );
-            packs.put( AIR, new FlexmojosAIRPackager() );
-        }
-        return packs;
     }
 
 }

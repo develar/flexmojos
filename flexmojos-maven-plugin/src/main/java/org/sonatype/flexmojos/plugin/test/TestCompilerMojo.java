@@ -9,7 +9,6 @@ import static org.sonatype.flexmojos.matcher.artifact.ArtifactMatcher.groupId;
 import static org.sonatype.flexmojos.matcher.artifact.ArtifactMatcher.scope;
 import static org.sonatype.flexmojos.matcher.artifact.ArtifactMatcher.type;
 import static org.sonatype.flexmojos.matcher.artifact.ArtifactMatcher.version;
-import static org.sonatype.flexmojos.plugin.common.FlexClassifier.LINK_REPORT;
 import static org.sonatype.flexmojos.plugin.common.FlexExtension.SWC;
 import static org.sonatype.flexmojos.plugin.common.FlexExtension.XML;
 import static org.sonatype.flexmojos.plugin.common.FlexScopes.CACHING;
@@ -19,6 +18,7 @@ import static org.sonatype.flexmojos.plugin.common.FlexScopes.INTERNAL;
 import static org.sonatype.flexmojos.plugin.common.FlexScopes.MERGED;
 import static org.sonatype.flexmojos.plugin.common.FlexScopes.RSL;
 import static org.sonatype.flexmojos.plugin.common.FlexScopes.TEST;
+import static org.sonatype.flexmojos.util.PathUtil.file;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -64,7 +64,6 @@ import flex2.compiler.common.SinglePathResolver;
  * @goal test-compile
  * @requiresDependencyResolution test
  * @phase test-compile
- * @configurator flexmojos
  * @threadSafe
  */
 public class TestCompilerMojo
@@ -406,8 +405,9 @@ public class TestCompilerMojo
 
             Map<String, Object> context = new LinkedHashMap<String, Object>();
             // TODO need a better idea to resolve link report file
-            context.put( LINK_REPORT, new File( project.getBuild().getDirectory(), project.getBuild().getFinalName()
-                + "-" + LINK_REPORT + "." + XML ) );
+            context.put( LINK_REPORT,
+                         file( project.getBuild().getFinalName() + "-" + LINK_REPORT + "." + XML,
+                               project.getBuild().getDirectory() ) );
             scanner.scan( sp, coverageExclusions, context );
         }
         return scanner;

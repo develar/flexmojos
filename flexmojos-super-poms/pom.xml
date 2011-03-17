@@ -8,8 +8,7 @@
   <parent>
     <groupId>org.sonatype.flexmojos</groupId>
     <artifactId>flexmojos-parent</artifactId>
-    <version>4.0-de4</version>
-    <relativePath>../flexmojos-parent/pom.xml</relativePath>
+    <version>4.0-de5</version>
   </parent>
 
   <artifactId>flexmojos-super-poms</artifactId>
@@ -44,8 +43,7 @@
     <profile>
       <activation>
         <property>
-          <name>performRelease</name>
-          <value>false</value>
+          <name>!performRelease</name>
         </property>
       </activation>
       <build>

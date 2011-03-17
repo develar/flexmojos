@@ -136,6 +136,14 @@ public abstract class AbstractMavenMojo
     protected File configDirectory;
 
     /**
+     * When false (faster) Flexmojos will compiler modules and resource bundles using multiple threads (One per SWF). If
+     * true, Thread.join() will be invoked to make the execution synchronous (sequential).
+     * 
+     * @parameter expression="${flex.fullSynchronization}" default-value="false"
+     */
+    protected boolean fullSynchronization;
+
+    /**
      * Local repository to be used by the plugin to resolve dependencies.
      * 
      * @parameter expression="${localRepository}"
@@ -389,9 +397,13 @@ public abstract class AbstractMavenMojo
         return includedFiles;
     }
 
-    protected String getAirTarget()
+    public String getAirTarget()
     {
-        int[] version = VersionUtils.splitVersion( getCompilerVersion(), 3 );
+        int[] version = VersionUtils.splitVersion( getCompilerVersion() );
+        if ( VersionUtils.isMinVersionOK( version, new int[] { 4, 5, 0, 19787 } ) )
+        {
+            return "2.6";
+        }
         if ( VersionUtils.isMinVersionOK( version, new int[] { 4, 5, 0 } ) )
         {
             return "2.5";
@@ -554,14 +566,18 @@ public abstract class AbstractMavenMojo
         return directories;
     }
 
+    public MavenSession getSession()
+    {
+        return session;
+    }
+
     public File getTargetDirectory()
     {
         targetDirectory.mkdirs();
         return PathUtil.file( targetDirectory );
     }
 
-    protected File getUnpackedArtifact( String groupId, String artifactId, String version, String classifier,
-                                        String type )
+    public File getUnpackedArtifact( String groupId, String artifactId, String version, String classifier, String type )
     {
         Artifact artifact = resolve( groupId, artifactId, version, classifier, type );
 
@@ -621,7 +637,7 @@ public abstract class AbstractMavenMojo
         ( (ThreadLocal<E>) valueHolder ).set( value );
     }
 
-    protected Artifact resolve( String groupId, String artifactId, String version, String classifier, String type )
+    public Artifact resolve( String groupId, String artifactId, String version, String classifier, String type )
         throws RuntimeMavenResolutionException
     {
         Artifact artifact =

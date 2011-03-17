@@ -4,12 +4,11 @@
   <parent>
     <groupId>org.sonatype.flexmojos</groupId>
     <artifactId>flexmojos-unittest</artifactId>
-    <version>4.0-de4</version>
-    <relativePath>../pom.xml</relativePath>
+    <version>4.0-de5</version>
   </parent>
 
   <artifactId>flexmojos-test-coverage</artifactId>
-  <version>4.0-de4</version>
+  <version>4.0-de5</version>
   <packaging>swc</packaging>
   
   <name>Flexmojos Unit Test Coverage</name>

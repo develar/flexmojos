@@ -29,7 +29,6 @@ import org.sonatype.flexmojos.util.PathUtil;
  * @goal dita-asdoc
  * @requiresDependencyResolution compile
  * @phase package
- * @configurator flexmojos
  * @threadSafe
  */
 public class DitaAsdocMojo
@@ -39,7 +38,7 @@ public class DitaAsdocMojo
     /**
      * Skips flexmojos dita-asdoc goal execution
      * 
-     * @parameter expression="${flexmojos.ditaSkip}" default-value="true"
+     * @parameter expression="${flexmojos.ditaSkip}"
      */
     protected boolean ditaSkip;
 

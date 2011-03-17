@@ -1,7 +1,16 @@
 package org.sonatype.flexmojos.plugin.compiler;
 
-import static org.sonatype.flexmojos.util.CollectionUtils.*;
+import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.anyOf;
+import static org.hamcrest.Matchers.not;
+import static org.sonatype.flexmojos.matcher.artifact.ArtifactMatcher.scope;
+import static org.sonatype.flexmojos.matcher.artifact.ArtifactMatcher.type;
+import static org.sonatype.flexmojos.plugin.common.FlexExtension.SWC;
 import static org.sonatype.flexmojos.plugin.common.FlexExtension.SWF;
+import static org.sonatype.flexmojos.plugin.common.FlexScopes.CACHING;
+import static org.sonatype.flexmojos.plugin.common.FlexScopes.EXTERNAL;
+import static org.sonatype.flexmojos.plugin.common.FlexScopes.INTERNAL;
+import static org.sonatype.flexmojos.plugin.common.FlexScopes.RSL;
 import static org.sonatype.flexmojos.util.PathUtil.file;
 
 import java.io.File;
@@ -16,7 +25,7 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.sonatype.flexmojos.compiler.ICommandLineConfiguration;
 import org.sonatype.flexmojos.compiler.MxmlcConfigurationHolder;
 import org.sonatype.flexmojos.compiler.command.Result;
-import org.sonatype.flexmojos.plugin.compiler.attributes.converter.Module;
+import org.sonatype.flexmojos.plugin.compiler.attributes.Module;
 import org.sonatype.flexmojos.plugin.utilities.MavenUtils;
 import org.sonatype.flexmojos.plugin.utilities.SourceFileResolver;
 import org.sonatype.flexmojos.truster.FlashPlayerTruster;
@@ -36,7 +45,6 @@ import org.sonatype.flexmojos.util.PathUtil;
  * @goal compile-swf
  * @requiresDependencyResolution compile
  * @phase compile
- * @configurator flexmojos
  * @threadSafe
  */
 public class MxmlcMojo
@@ -211,19 +219,13 @@ public class MxmlcMojo
                 cfg.classifier = classifier;
                 cfg.targetDirectory = moduleOutputDir;
                 cfg.finalName = moduleFinalName;
-//                if ( module.isOptimize() )
-//                {
-//                    cfg.getCache().put( LOAD_EXTERNS, loadExterns.toArray( new String[1] ) );
-//                }
-//                cfg.getCache().put( RUNTIME_SHARED_LIBRARY_PATH, null );
-//                cfg.getCache().put( INCLUDE_LIBRARIES, null );
-//                cfg.getCache().put( EXTERNAL_LIBRARY_PATH,
-//                                    MavenUtils.getFiles(getDependencies(not(GLOBAL_MATCHER),//
-//                                            allOf(type(SWC),//
-//                                                    anyOf(scope(EXTERNAL),
-//                                                            scope(CACHING), scope(RSL),
-//                                                            scope(INTERNAL)))),
-//                                            getGlobalArtifact()) );
+                if ( module.isOptimize() )
+                {
+                    cfg.getCache().put( LOAD_EXTERNS, loadExterns.toArray( new String[1] ) );
+                }
+                cfg.getCache().put( RUNTIME_SHARED_LIBRARY_PATH, null );
+                cfg.getCache().put( INCLUDE_LIBRARIES, null );
+                cfg.getCache().put( EXTERNAL_LIBRARY_PATH, getModulesExternalLibraryPath() );
                 results.add( executeCompiler( new MxmlcConfigurationHolder( cfg, moduleSource ), fullSynchronization ) );
             }
 
@@ -244,11 +246,6 @@ public class MxmlcMojo
     @Override
     public String[] getLocale()
     {
-      if (!useDefaultLocale)
-      {
-        return new String[] {};
-      }
-      
         String[] locales = super.getLocale();
         if ( locales != null )
         {
@@ -267,6 +264,15 @@ public class MxmlcMojo
     public Module[] getModules()
     {
         return modules;
+    }
+
+    @SuppressWarnings( "unchecked" )
+    private File[] getModulesExternalLibraryPath()
+    {
+        return MavenUtils.getFiles( getDependencies( not( GLOBAL_MATCHER ),//
+                                                     allOf( type( SWC ),//
+                                                            anyOf( scope( EXTERNAL ), scope( CACHING ), scope( RSL ),
+                                                                   scope( INTERNAL ) ) ) ), getGlobalArtifact() );
     }
 
     public String getProjector()
@@ -290,4 +296,5 @@ public class MxmlcMojo
     {
         return updateSecuritySandbox;
     }
+
 }

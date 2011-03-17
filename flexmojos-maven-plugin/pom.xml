@@ -8,8 +8,7 @@
   <parent>
     <groupId>org.sonatype.flexmojos</groupId>
     <artifactId>flexmojos-parent</artifactId>
-    <version>4.0-de4</version>
-    <relativePath>../flexmojos-parent/pom.xml</relativePath>
+    <version>4.0-de5</version>
   </parent>
 
   <artifactId>flexmojos-maven-plugin</artifactId>
@@ -87,13 +86,6 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>aspectj-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <goals>
-              <goal>compile</goal>
-            </goals>
-          </execution>
-        </executions>
       </plugin>
       <plugin>
         <groupId>org.codehaus.plexus</groupId>
@@ -138,27 +130,27 @@
         </executions>
       </plugin>
 
-      <!--<plugin>
-        <groupId>org.sonatype.plugins</groupId>
-        <artifactId>tattletale-maven-plugin</artifactId>
-        <version>1.0</version>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
         <executions>
           <execution>
             <goals>
-              <goal>tattletale-dependencies</goal>
+              <goal>enforce</goal>
             </goals>
             <configuration>
-              <includeRtJar>true</includeRtJar>
-              <profiles>
-                <profile>java6</profile>
-              </profiles>
-              <reports>
-                <report>multiplejars</report>
-              </reports>
+              <rules>
+                <bannedPlugins>
+                  <message>maven-invoker-plugin isn't allowed here, add tests on flexmojos-test-harness instead</message>
+                  <excludes>
+                    <exclude>*:maven-invoker-plugin</exclude>
+                  </excludes>
+                </bannedPlugins>
+              </rules>
             </configuration>
           </execution>
         </executions>
-      </plugin>-->
+      </plugin>
     </plugins>
   </build>
 
@@ -214,6 +206,11 @@
       <version>${project.version}</version>
       <type>maven-plugin</type>
     </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>flexmojos-util</artifactId>
+      <version>${project.version}</version>
+    </dependency>
 
     <dependency>
       <groupId>dom4j</groupId>
@@ -224,6 +221,12 @@
       <artifactId>maven-compat</artifactId>
       <version>${maven.version}</version>
       <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <artifactId>sisu-inject-plexus</artifactId>
+          <groupId>org.sonatype.sisu</groupId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency> <!-- required by unit tests -->
       <groupId>jaxen</groupId>
@@ -280,10 +283,6 @@
       <artifactId>zip</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.codehaus.plexus</groupId>
-      <artifactId>plexus-component-annotations</artifactId>
-    </dependency>
-    <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>flexmojos-tester</artifactId>
       <version>${project.version}</version>
@@ -296,10 +295,6 @@
       <version>9.0</version>
     </dependency>
 
-    <dependency>
-      <groupId>jgoogleanalytics</groupId>
-      <artifactId>jgoogleanalytics</artifactId>
-    </dependency>
     <dependency>
       <groupId>com.googlecode.lambdaj</groupId>
       <artifactId>lambdaj</artifactId>
@@ -317,6 +312,10 @@
       <exclusions>
         <exclusion>
           <artifactId>plexus-component-api</artifactId>
+          <groupId>org.codehaus.plexus</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>plexus-container-default</artifactId>
           <groupId>org.codehaus.plexus</groupId>
         </exclusion>
       </exclusions>
@@ -351,44 +350,30 @@
 
   <profiles>
     <profile>
-      <activation>
-        <property>
-          <name>performRelease</name>
-          <value>false</value>
-        </property>
-      </activation>
+      <id>site</id>
       <build>
         <plugins>
           <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-enforcer-plugin</artifactId>
-            <version>1.0-beta-2-SNAPSHOT</version>
+            <groupId>org.sonatype.plugins</groupId>
+            <artifactId>tattletale-maven-plugin</artifactId>
+            <version>1.0</version>
             <executions>
               <execution>
                 <goals>
-                  <goal>enforce</goal>
+                  <goal>tattletale-dependencies</goal>
                 </goals>
                 <configuration>
-                  <rules>
-                    <bannedPlugins>
-                      <message>maven-invoker-plugin isn't allowed here, add tests on flexmojos-test-harness instead</message>
-                      <excludes>
-                        <exclude>*:maven-invoker-plugin</exclude>
-                      </excludes>
-                    </bannedPlugins>
-                  </rules>
+                  <includeRtJar>true</includeRtJar>
+                  <profiles>
+                    <profile>java6</profile>
+                  </profiles>
+                  <reports>
+                    <report>multiplejars</report>
+                  </reports>
                 </configuration>
               </execution>
             </executions>
           </plugin>
-        </plugins>
-      </build>
-    </profile>
-
-    <profile>
-      <id>site</id>
-      <build>
-        <plugins>
           <plugin>
             <artifactId>maven-site-plugin</artifactId>
             <executions>

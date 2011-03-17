@@ -24,6 +24,8 @@ public interface FlexExtension
 
     String APK = "apk";
 
+    String BAR = "bar";
+
     String CSS = "css";
 
     String DEB = "deb";
@@ -31,6 +33,8 @@ public interface FlexExtension
     String DMG = "dmg";
 
     String EXE = "exe";
+
+    String IPA = "ipa";
 
     String POM = "pom";
 

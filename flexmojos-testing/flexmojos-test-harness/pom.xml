@@ -9,8 +9,7 @@
   <parent>
     <groupId>org.sonatype.flexmojos</groupId>
     <artifactId>flexmojos-testing</artifactId>
-    <version>4.0-de4</version>
-    <relativePath>../pom.xml</relativePath>
+    <version>4.0-de5</version>
   </parent>
 
   <artifactId>flexmojos-test-harness</artifactId>
@@ -220,9 +219,9 @@
             <xml>org.sonatype.flexmojos:flexmojos-unittest-asunit:${project.version}:swc</xml>
             <xml>org.sonatype.flexmojos:flexmojos-unittest-advancedflex:${project.version}:swc</xml>
 
-            <!--<xml>org.sonatype.flexmojos:flexmojos-air-super-pom:${project.version}:pom</xml>-->
-            <!--<xml>org.sonatype.flexmojos:flexmojos-flex-super-pom:${project.version}:pom</xml>-->
-            <!--<xml>org.sonatype.flexmojos:flexmojos-super-pom-commons:${project.version}:pom</xml>-->
+            <xml>org.sonatype.flexmojos:flexmojos-air-super-pom:${project.version}:pom</xml>
+            <xml>org.sonatype.flexmojos:flexmojos-flex-super-pom:${project.version}:pom</xml>
+            <xml>org.sonatype.flexmojos:flexmojos-super-pom-commons:${project.version}:pom</xml>
             
             <xml>org.sonatype.flexmojos:flexmojos-sample-configurator:${project.version}:jar</xml>
           </extraArtifacts>

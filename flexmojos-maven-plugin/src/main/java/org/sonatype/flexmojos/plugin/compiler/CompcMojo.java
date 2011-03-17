@@ -19,7 +19,7 @@ import org.sonatype.flexmojos.compiler.IIncludeStylesheet;
 import org.sonatype.flexmojos.compiler.command.Result;
 import org.sonatype.flexmojos.plugin.compiler.attributes.MavenIncludeStylesheet;
 import org.sonatype.flexmojos.plugin.compiler.attributes.MavenNamespace;
-import org.sonatype.flexmojos.plugin.compiler.attributes.converter.SimplifiablePattern;
+import org.sonatype.flexmojos.plugin.compiler.attributes.SimplifiablePattern;
 import org.sonatype.flexmojos.util.PathUtil;
 
 /**
@@ -36,7 +36,6 @@ import org.sonatype.flexmojos.util.PathUtil;
  * @goal compile-swc
  * @requiresDependencyResolution compile
  * @phase compile
- * @configurator flexmojos
  * @threadSafe
  */
 @SuppressWarnings({"UnusedDeclaration", "MismatchedReadAndWriteOfArray"})
@@ -278,7 +277,7 @@ public class CompcMojo
         List<IIncludeFile> files = new ArrayList<IIncludeFile>();
 
         List<FileSet> patterns = new ArrayList<FileSet>();
-        if ( includeFiles == null && includeNamespaces == null && includeSources == null )
+        if ( includeFiles == null && includeNamespaces == null && includeSources == null && includeClasses == null )
         {
             patterns.addAll( resources );
         }
@@ -295,6 +294,14 @@ public class CompcMojo
             for ( final String path : includeFiles.getIncludes() )
             {
                 final File file = PathUtil.file( path, getResourcesTargetDirectories() );
+
+                if ( file == null )
+                {
+                    throw new IllegalStateException(
+                                                     "Unable to resolve include file, path: '"
+                                                         + path
+                                                         + "'. Please ensure that the file exists. Note: relative paths must be relative to a resource target directory." );
+                }
 
                 files.add( new IIncludeFile()
                 {
@@ -340,7 +347,7 @@ public class CompcMojo
             }
         }
 
-        return files.toArray( new IIncludeFile[0] );
+        return files.toArray(new IIncludeFile[files.size()]);
     }
 
     public Boolean getIncludeLookupOnly()

@@ -13,27 +13,28 @@ import com.adobe.air.Listener;
 public interface IPackager
 {
 
-    void setOutput( File output )
-        throws FileNotFoundException, IOException;
+    void addSourceWithPath( File source, String path );
+
+    void close();
+
+    void createPackage()
+        throws GeneralSecurityException, IOException;
+
+    void setCertificateChain( Certificate[] certificateChain )
+        throws CertificateException;
 
     void setDescriptor( File airDescriptor );
+
+    void setListener( Listener listener );
+
+    void setOutput( File output )
+        throws FileNotFoundException, IOException;
 
     void setPrivateKey( PrivateKey key );
 
     void setSignerCertificate( Certificate certificate )
         throws CertificateException;
 
-    void setCertificateChain( Certificate[] certificateChain )
-        throws CertificateException;
-
     void setTimestampURL( String string );
 
-    void addSourceWithPath( File source, String path );
-
-    void setListener( Listener listener );
-
-    void createPackage()
-        throws GeneralSecurityException, IOException;
-
-    void close();
 }

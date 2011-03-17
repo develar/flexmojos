@@ -9,7 +9,7 @@ import org.hamcrest.Matchers;
 import org.hamcrest.TypeSafeMatcher;
 
 /**
- * © time4tea technology ltd 2007 - Freely redistributable as long as source is acknowledged
+ * time4tea technology ltd 2007 - Freely redistributable as long as source is acknowledged
  */
 public class FileMatcher
 {
@@ -119,7 +119,6 @@ public class FileMatcher
         };
     }
 
-    @SuppressWarnings( "unchecked" )
     public static Matcher<File> sized( Long size )
     {
         return sized( (Matcher<Long>) Matchers.equalTo( size ) );
