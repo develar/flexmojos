@@ -30,8 +30,8 @@
 
   <distributionManagement>
     <repository>
-      <id>ossrh</id>
-      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
+      <id>flyti-thirdparty</id>
+      <url>http://flyti.org:8081/content/repositories/thirdparty</url>
     </repository>
     <snapshotRepository>
       <id>ossrh</id>

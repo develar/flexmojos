@@ -2924,6 +2924,10 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
           files.add( dir );
         }
       }
+      
+      if (additionalSourcePath != null) {
+        files.add(additionalSourcePath);
+      }
 
         return files.toArray(new File[files.size()]);
     }
@@ -3377,6 +3381,11 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
             throw new IllegalStateException( msg );
         }
     }
+  
+   /**
+   * @parameter
+   */
+  private File additionalSourcePath;
 
   /**
    * @parameter default-value="false"

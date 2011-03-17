@@ -246,6 +246,11 @@ public class MxmlcMojo
     @Override
     public String[] getLocale()
     {
+      if (!useDefaultLocale)
+      {
+        return new String[] {};
+      }
+      
         String[] locales = super.getLocale();
         if ( locales != null )
         {

@@ -277,7 +277,7 @@ public class CompcMojo
         List<IIncludeFile> files = new ArrayList<IIncludeFile>();
 
         List<FileSet> patterns = new ArrayList<FileSet>();
-        if ( includeFiles == null && includeNamespaces == null && includeSources == null && includeClasses == null )
+        if ( includeFiles == null && includeNamespaces == null && includeSources == null )
         {
             patterns.addAll( resources );
         }
