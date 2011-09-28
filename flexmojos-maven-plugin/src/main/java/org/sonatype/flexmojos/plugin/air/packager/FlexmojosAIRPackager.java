@@ -3,18 +3,17 @@ package org.sonatype.flexmojos.plugin.air.packager;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.security.GeneralSecurityException;
 import java.security.PrivateKey;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 
-import org.sonatype.flexmojos.plugin.AbstractMavenMojo;
-
 import com.adobe.air.AIRPackager;
 import com.adobe.air.Listener;
 
 public class FlexmojosAIRPackager
-    implements IPackager
 {
 
     private final AIRPackager packager;
@@ -38,7 +37,23 @@ public class FlexmojosAIRPackager
     public void createPackage()
         throws GeneralSecurityException, IOException
     {
-        this.packager.createPackage();
+        try
+        {
+            this.packager.createPackage();
+        }
+        catch ( NoSuchMethodError ex )
+        {
+            try
+            {
+                Class<? extends AIRPackager> packagerClass = this.packager.getClass();
+                Method packagerMethod = packagerClass.getMethod( "createAIR" );
+                packagerMethod.invoke( this.packager );
+            }
+            catch ( Exception e )
+            {
+                throw new IllegalStateException(e);
+            }
+        }
     }
 
     public void setCertificateChain( Certificate[] certificateChain )

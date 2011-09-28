@@ -65,6 +65,7 @@ import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
 import org.hamcrest.Matcher;
 import org.sonatype.flexmojos.compatibilitykit.FlexCompatibility;
 import org.sonatype.flexmojos.compatibilitykit.FlexMojo;
+import org.sonatype.flexmojos.compatibilitykit.VersionUtils;
 import org.sonatype.flexmojos.compiler.IApplicationDomain;
 import org.sonatype.flexmojos.compiler.ICompcConfiguration;
 import org.sonatype.flexmojos.compiler.ICompilerConfiguration;
@@ -291,7 +292,7 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
      * 
      * @parameter
      */
-    private Map<String, String> compilerWarnings = new LinkedHashMap<String, String>();
+    private final Map<String, String> compilerWarnings = new LinkedHashMap<String, String>();
 
     /**
      * The maven compile source roots
@@ -694,9 +695,10 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
      * Usually, you must use the same compiler and framework versions. Set this to true to avoid this check. EXTREMELLY
      * UN-ADVISIBLE.
      * 
-     * @parameter default-value="false" expression="${flex.ignoreVersionIssues}"
+     * @parameter default-value="false"
+     *            expression="${flex.iKnowWhatImDoingPleaseBreakMyBuildIwontBlameFlexmojosForStopWorking}"
      */
-    private boolean ignoreVersionIssues;
+    private boolean iKnowWhatImDoingPleaseBreakMyBuildIwontBlameFlexmojosForStopWorking;
 
     /**
      * Only include inheritance dependencies of classes specified with include-classes.
@@ -922,6 +924,7 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
      * @deprecated use dependency with type "xml" and classifier "link-report"
      * @parameter
      */
+    @Deprecated
     protected MavenArtifact[] loadExterns;
 
     /**
@@ -1171,6 +1174,21 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
      * @parameter expression="${flex.resourceBundleList}"
      */
     private File resourceBundleList;
+
+    /**
+     * Pattern to be used for locales resurce bundles names generation. Accepts special tokens:
+     * 
+     * <pre>
+     * {locale}     - replace by locale name
+     * {artifactId} - replace by artifactId
+     * {groupId}    - replace by groupId
+     * {version}    - replace by version
+     * {classifier} - replace by classifier
+     * </pre>
+     * 
+     * @parameter
+     */
+    protected String resourceBundleNames;
 
     /**
      * This undocumented option is for compiler performance testing. It allows the Flex 3 compiler to compile the Flex 2
@@ -1601,7 +1619,7 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
             return;
         }
 
-        getLog().warn( "Added the halo.swc theme because mx.swc was included as a dependency" );
+        getLog().warn( "Adding halo.swc theme because mx.swc was included as a dependency" );
         themes.add( haloSwc );
     }
 
@@ -1614,7 +1632,7 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
             return;
         }
 
-        getLog().warn( "Added the spark.css theme because spark.swc was included as a dependency" );
+        getLog().warn( "Adding spark.css theme because spark.swc was included as a dependency" );
         themes.add( sparkCss );
     }
 
@@ -2115,14 +2133,14 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
                        anyOf( scope( EXTERNAL ), scope( CACHING ), scope( RSL ), scope( COMPILE ),
                               scope( nullValue( String.class ) ) )//
                 );
-            return MavenUtils.getFiles( getDependencies( swcs, not( GLOBAL_MATCHER ) ), getGlobalArtifact() );
+            return MavenUtils.getFiles( getDependencies( swcs, not( GLOBAL_MATCHER ) ), getGlobalArtifactCollection() );
         }
         else
         {
             return MavenUtils.getFiles( getDependencies( not( GLOBAL_MATCHER ),//
                                                          allOf( type( SWC ),//
                                                                 anyOf( scope( EXTERNAL ), scope( CACHING ), scope( RSL ) ) ) ),
-                                        getGlobalArtifact() );
+                                        getGlobalArtifactCollection() );
         }
     }
 
@@ -2186,8 +2204,7 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
         return generateFrameLoader;
     }
 
-    @SuppressWarnings( "unchecked" )
-    public Collection<Artifact> getGlobalArtifact()
+    public Collection<Artifact> getGlobalArtifactCollection()
     {
         synchronized ( lock )
         {
@@ -2947,9 +2964,38 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
         return swcChecksum;
     }
 
+    @FlexCompatibility( minVersion = "4.5" )
     public Integer getSwfVersion()
     {
-        return swfVersion;
+        if ( swfVersion != null )
+        {
+            return swfVersion;
+        }
+
+        Artifact global = getGlobalArtifact();
+        if ( PLAYER_GLOBAL.equals( global.getArtifactId() ) )
+        {
+            String playerVersion = global.getClassifier();
+            if ( playerVersion == null )
+            {
+                playerVersion = "9";
+            }
+
+            if ( VersionUtils.isMinVersionOK( playerVersion, "11" ) )
+                return 13;
+            if ( VersionUtils.isMinVersionOK( playerVersion, "10.3" ) )
+                return 12;
+            if ( VersionUtils.isMinVersionOK( playerVersion, "10.2" ) )
+                return 11;
+            if ( VersionUtils.isMinVersionOK( playerVersion, "10.1" ) )
+                return 10;
+            if ( VersionUtils.isMinVersionOK( playerVersion, "9" ) )
+                return 9;
+
+            getLog().warn( "Unable to determine 'swfVersion' for " + global );
+        }
+
+        return null;
     }
 
     public String getTargetPlayer()
@@ -3355,7 +3401,7 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
 
     public void versionCheck()
     {
-        if ( ignoreVersionIssues )
+        if ( iKnowWhatImDoingPleaseBreakMyBuildIwontBlameFlexmojosForStopWorking )
         {
             return;
         }
@@ -3376,7 +3422,7 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
                     + "' - Framework: '"
                     + frameworkVersion
                     + "'.\n"
-                    + " You can use 'ignoreVersionIssues' to disable this check.  Please refer to Flexmojos maven doc.\n"
+                    + " You can use 'iKnowWhatImDoingPleaseBreakMyBuildIwontBlameFlexmojosForStopWorking' to disable this check.  Please refer to Flexmojos maven doc.\n"
                     + "If you prefer fixing it instead of ignoring, take a look at: https://docs.sonatype.org/display/FLEXMOJOS/How+to+set+Flex+SDK+version";
             throw new IllegalStateException( msg );
         }

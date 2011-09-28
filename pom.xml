@@ -13,7 +13,7 @@
 
   <groupId>org.sonatype.flexmojos</groupId>
   <artifactId>flexmojos-parent</artifactId>
-  <version>4.0-de7</version>
+  <version>4.1-de0</version>
   <packaging>pom</packaging>
 
   <name>Flexmojos Parent</name>
@@ -49,12 +49,12 @@
 
   <properties>
     <commons_io.version>1.4</commons_io.version>
-    <flex.sdk.version>4.5.0.20968</flex.sdk.version>
+    <flex.sdk.version>4.5.2.21576</flex.sdk.version>
     <maven.version>3.0.3</maven.version>
     <maven-site-plugin.version>3.0-beta-3</maven-site-plugin.version>
     <sisu.version>2.1.1</sisu.version>
     <plexus.version>1.5.4</plexus.version>
-    <apparat.version>1.0.RC7</apparat.version>
+    <apparat.version>1.0-RC9</apparat.version>
   </properties>
 
   <build>
@@ -63,7 +63,7 @@
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>aspectj-maven-plugin</artifactId>
-          <version>1.4-SONATYPE-13219</version>
+          <version>1.3.1</version>
           <configuration>
             <complianceLevel>1.6</complianceLevel>
           </configuration>
@@ -81,7 +81,7 @@
         </plugin>
         <plugin>
           <artifactId>maven-deploy-plugin</artifactId>
-          <version>2.5</version>
+          <version>2.7</version>
         </plugin>
         <plugin>
           <groupId>org.codehaus.izpack</groupId>
@@ -150,93 +150,93 @@
             <createChecksum>true</createChecksum>
             <skipChecksumVerification>false</skipChecksumVerification>
             <artifactItems>
-              <artifactItem>
-                <groupId>com.adobe</groupId>
-                <artifactId>flashplayer</artifactId>
-                <version>10.2</version>
-                <packaging>exe</packaging>
-                <downloadUrl>http://download.macromedia.com/pub/flashplayer/updaters/10/flashplayer_10_sa_debug.exe</downloadUrl>
-              </artifactItem>
-              <artifactItem>
-                <groupId>com.adobe</groupId>
-                <artifactId>flashplayer</artifactId>
-                <version>9.0</version>
-                <packaging>exe</packaging>
-                <downloadUrl>http://download.macromedia.com/pub/flashplayer/updaters/9/sa_flashplayer_9_debug.exe</downloadUrl>
-              </artifactItem>
-              <artifactItem>
-                <groupId>com.adobe</groupId>
-                <artifactId>flashplayer</artifactId>
-                <version>10.2</version>
-                <classifier>linux</classifier>
-                <packaging>uexe</packaging>
-                <downloadUrl>http://download.macromedia.com/pub/flashplayer/updaters/10/flashplayer_10_sa_debug.tar.gz</downloadUrl>
-                <extractFile>flashplayerdebugger</extractFile>
-              </artifactItem>
-              <artifactItem>
-                <groupId>com.adobe</groupId>
-                <artifactId>flashplayer</artifactId>
-                <version>9.0</version>
-                <classifier>linux</classifier>
-                <packaging>uexe</packaging>
-                <downloadUrl>http://download.macromedia.com/pub/flashplayer/updaters/9/flashplayer_9_sa_debug.tar.gz</downloadUrl>
-                <extractFile>flashplayer</extractFile>
-              </artifactItem>
-              <artifactItem>
-                <groupId>com.adobe</groupId>
-                <artifactId>adl</artifactId>
-                <version>2.5</version>
-                <packaging>exe</packaging>
-                <downloadUrl>http://airdownload.adobe.com/air/win/download/latest/AdobeAIRSDK.zip</downloadUrl>
-                <extractFile>bin/adl.exe</extractFile>
-              </artifactItem>
-              <artifactItem>
-                <groupId>com.adobe.adl</groupId>
-                <artifactId>runtime</artifactId>
-                <version>2.5</version>
-                <packaging>zip</packaging>
-                <downloadUrl>http://airdownload.adobe.com/air/win/download/latest/AdobeAIRSDK.zip</downloadUrl>
-                <extractFile>runtimes/air/win</extractFile>
-                <repack>true</repack>
-              </artifactItem>
-              <artifactItem>
-                <groupId>com.adobe.adl</groupId>
-                <artifactId>nai</artifactId>
-                <version>2.5</version>
-                <packaging>zip</packaging>
-                <downloadUrl>http://airdownload.adobe.com/air/win/download/latest/AdobeAIRSDK.zip</downloadUrl>
-                <extractFile>lib/nai</extractFile>
-                <repack>true</repack>
-              </artifactItem>
-              <artifactItem>
-                <groupId>com.adobe</groupId>
-                <artifactId>adl</artifactId>
-                <version>2.5</version>
-                <classifier>linux</classifier>
-                <packaging>uexe</packaging>
-                <downloadUrl>http://airdownload.adobe.com/air/lin/download/latest/AdobeAIRSDK.tbz2</downloadUrl>
-                <extractFile>bin/adl</extractFile>
-              </artifactItem>
-              <artifactItem>
-                <groupId>com.adobe.adl</groupId>
-                <artifactId>runtime</artifactId>
-                <version>2.5</version>
-                <classifier>linux</classifier>
-                <packaging>tar.gz</packaging>
-                <downloadUrl>http://airdownload.adobe.com/air/lin/download/latest/AdobeAIRSDK.tbz2</downloadUrl>
-                <extractFile>runtimes/air/linux</extractFile>
-                <repack>true</repack>
-              </artifactItem>
-              <artifactItem>
-                <groupId>com.adobe.adl</groupId>
-                <artifactId>nai</artifactId>
-                <version>2.5</version>
-                <classifier>linux</classifier>
-                <packaging>tar.gz</packaging>
-                <downloadUrl>http://airdownload.adobe.com/air/lin/download/latest/AdobeAIRSDK.tbz2</downloadUrl>
-                <extractFile>lib/nai</extractFile>
-                <repack>true</repack>
-              </artifactItem>
+              <!--<artifactItem>-->
+                <!--<groupId>com.adobe</groupId>-->
+                <!--<artifactId>flashplayer</artifactId>-->
+                <!--<version>10.2</version>-->
+                <!--<packaging>exe</packaging>-->
+                <!--<downloadUrl>http://download.macromedia.com/pub/flashplayer/updaters/10/flashplayer_10_sa_debug.exe</downloadUrl>-->
+              <!--</artifactItem>-->
+              <!--<artifactItem>-->
+                <!--<groupId>com.adobe</groupId>-->
+                <!--<artifactId>flashplayer</artifactId>-->
+                <!--<version>9.0</version>-->
+                <!--<packaging>exe</packaging>-->
+                <!--<downloadUrl>http://download.macromedia.com/pub/flashplayer/updaters/9/sa_flashplayer_9_debug.exe</downloadUrl>-->
+              <!--</artifactItem>-->
+              <!--<artifactItem>-->
+                <!--<groupId>com.adobe</groupId>-->
+                <!--<artifactId>flashplayer</artifactId>-->
+                <!--<version>10.2</version>-->
+                <!--<classifier>linux</classifier>-->
+                <!--<packaging>uexe</packaging>-->
+                <!--<downloadUrl>http://download.macromedia.com/pub/flashplayer/updaters/10/flashplayer_10_sa_debug.tar.gz</downloadUrl>-->
+                <!--<extractFile>flashplayerdebugger</extractFile>-->
+              <!--</artifactItem>-->
+              <!--<artifactItem>-->
+                <!--<groupId>com.adobe</groupId>-->
+                <!--<artifactId>flashplayer</artifactId>-->
+                <!--<version>9.0</version>-->
+                <!--<classifier>linux</classifier>-->
+                <!--<packaging>uexe</packaging>-->
+                <!--<downloadUrl>http://download.macromedia.com/pub/flashplayer/updaters/9/flashplayer_9_sa_debug.tar.gz</downloadUrl>-->
+                <!--<extractFile>flashplayer</extractFile>-->
+              <!--</artifactItem>-->
+              <!--<artifactItem>-->
+                <!--<groupId>com.adobe</groupId>-->
+                <!--<artifactId>adl</artifactId>-->
+                <!--<version>2.5</version>-->
+                <!--<packaging>exe</packaging>-->
+                <!--<downloadUrl>http://airdownload.adobe.com/air/win/download/latest/AdobeAIRSDK.zip</downloadUrl>-->
+                <!--<extractFile>bin/adl.exe</extractFile>-->
+              <!--</artifactItem>-->
+              <!--<artifactItem>-->
+                <!--<groupId>com.adobe.adl</groupId>-->
+                <!--<artifactId>runtime</artifactId>-->
+                <!--<version>2.5</version>-->
+                <!--<packaging>zip</packaging>-->
+                <!--<downloadUrl>http://airdownload.adobe.com/air/win/download/latest/AdobeAIRSDK.zip</downloadUrl>-->
+                <!--<extractFile>runtimes/air/win</extractFile>-->
+                <!--<repack>true</repack>-->
+              <!--</artifactItem>-->
+              <!--<artifactItem>-->
+                <!--<groupId>com.adobe.adl</groupId>-->
+                <!--<artifactId>nai</artifactId>-->
+                <!--<version>2.5</version>-->
+                <!--<packaging>zip</packaging>-->
+                <!--<downloadUrl>http://airdownload.adobe.com/air/win/download/latest/AdobeAIRSDK.zip</downloadUrl>-->
+                <!--<extractFile>lib/nai</extractFile>-->
+                <!--<repack>true</repack>-->
+              <!--</artifactItem>-->
+              <!--<artifactItem>-->
+                <!--<groupId>com.adobe</groupId>-->
+                <!--<artifactId>adl</artifactId>-->
+                <!--<version>2.5</version>-->
+                <!--<classifier>linux</classifier>-->
+                <!--<packaging>uexe</packaging>-->
+                <!--<downloadUrl>http://airdownload.adobe.com/air/lin/download/latest/AdobeAIRSDK.tbz2</downloadUrl>-->
+                <!--<extractFile>bin/adl</extractFile>-->
+              <!--</artifactItem>-->
+              <!--<artifactItem>-->
+                <!--<groupId>com.adobe.adl</groupId>-->
+                <!--<artifactId>runtime</artifactId>-->
+                <!--<version>2.5</version>-->
+                <!--<classifier>linux</classifier>-->
+                <!--<packaging>tar.gz</packaging>-->
+                <!--<downloadUrl>http://airdownload.adobe.com/air/lin/download/latest/AdobeAIRSDK.tbz2</downloadUrl>-->
+                <!--<extractFile>runtimes/air/linux</extractFile>-->
+                <!--<repack>true</repack>-->
+              <!--</artifactItem>-->
+              <!--<artifactItem>-->
+                <!--<groupId>com.adobe.adl</groupId>-->
+                <!--<artifactId>nai</artifactId>-->
+                <!--<version>2.5</version>-->
+                <!--<classifier>linux</classifier>-->
+                <!--<packaging>tar.gz</packaging>-->
+                <!--<downloadUrl>http://airdownload.adobe.com/air/lin/download/latest/AdobeAIRSDK.tbz2</downloadUrl>-->
+                <!--<extractFile>lib/nai</extractFile>-->
+                <!--<repack>true</repack>-->
+              <!--</artifactItem>-->
             </artifactItems>
           </configuration>
           <executions>
@@ -259,9 +259,10 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-release-plugin</artifactId>
-          <version>2.1</version>
+          <version>2.2.1</version>
           <configuration>
             <autoVersionSubmodules>true</autoVersionSubmodules>
+            <tagNameFormat>flexmojos-@{project.version}</tagNameFormat>
           </configuration>
         </plugin>
       </plugins>
@@ -456,6 +457,12 @@
               <aggregate>true</aggregate>
             </configuration>
             <!-- <executions> <execution> <goals> <goal>check</goal> </goals> </execution> </executions> -->
+          </plugin>
+          <plugin>
+            <artifactId>maven-deploy-plugin</artifactId>
+            <configuration>
+              <updateReleaseInfo>true</updateReleaseInfo>
+            </configuration>
           </plugin>
         </plugins>
       </build>

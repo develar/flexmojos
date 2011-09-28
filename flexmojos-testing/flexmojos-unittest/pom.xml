@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.sonatype.flexmojos</groupId>
     <artifactId>flexmojos-testing</artifactId>
-    <version>4.0-de7</version>
+    <version>4.1-de0</version>
   </parent>
 
   <artifactId>flexmojos-unittest</artifactId>
@@ -18,7 +18,6 @@
       <plugin>
         <groupId>org.sonatype.flexmojos</groupId>
         <artifactId>flexmojos-maven-plugin</artifactId>
-        <version>${project.version}</version>
         <extensions>true</extensions>
         <configuration>
           <!-- dita is bugged, why it doesn't surprises me? -->

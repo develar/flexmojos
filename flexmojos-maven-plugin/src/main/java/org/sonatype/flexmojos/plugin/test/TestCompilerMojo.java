@@ -1,5 +1,6 @@
 package org.sonatype.flexmojos.plugin.test;
 
+import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.anyOf;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.Matchers.nullValue;
@@ -18,7 +19,9 @@ import static org.sonatype.flexmojos.plugin.common.FlexScopes.INTERNAL;
 import static org.sonatype.flexmojos.plugin.common.FlexScopes.MERGED;
 import static org.sonatype.flexmojos.plugin.common.FlexScopes.RSL;
 import static org.sonatype.flexmojos.plugin.common.FlexScopes.TEST;
+import static org.sonatype.flexmojos.util.PathUtil.existingFiles;
 import static org.sonatype.flexmojos.util.PathUtil.file;
+import static org.sonatype.flexmojos.util.PathUtil.files;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -38,13 +41,14 @@ import java.util.Set;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.model.FileSet;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.codehaus.plexus.util.DirectoryScanner;
 import org.sonatype.flexmojos.compiler.IRuntimeSharedLibraryPath;
 import org.sonatype.flexmojos.compiler.MxmlcConfigurationHolder;
 import org.sonatype.flexmojos.compiler.command.Result;
+import org.sonatype.flexmojos.plugin.common.FlexClassifier;
 import org.sonatype.flexmojos.plugin.common.flexbridge.MavenPathResolver;
 import org.sonatype.flexmojos.plugin.compiler.MxmlcMojo;
 import org.sonatype.flexmojos.plugin.compiler.attributes.MavenRuntimeException;
@@ -122,14 +126,14 @@ public class TestCompilerMojo
      * 
      * @parameter
      */
-    private String[] excludeTestFiles;
+    private List<String> excludeTestFiles;
 
     /**
      * File to be tested. If not defined assumes Test*.as and *Test.as
      * 
      * @parameter
      */
-    private String[] includeTestFiles;
+    private List<String> includeTestFiles;
 
     /**
      * @readonly
@@ -177,11 +181,25 @@ public class TestCompilerMojo
     private List<String> testCompileSourceRoots;
 
     /**
+     * If specified, the testrunner swf will be compiled to use this value as the control port to open during test runs.
+     * 
+     * @parameter expression="${flex.testControlPort}"
+     */
+    private Integer testControlPort;
+
+    /**
      * @parameter expression="${project.build.testOutputDirectory}"
      * @required
      * @readonly
      */
     private File testOutputDirectory;
+
+    /**
+     * If specified, the testrunner swf will be compiled to use this value as the port to open during test runs.
+     * 
+     * @parameter expression="${flex.testPort}"
+     */
+    private Integer testPort;
 
     /**
      * The maven test resources
@@ -196,12 +214,6 @@ public class TestCompilerMojo
      * @parameter
      */
     private File testRunnerTemplate;
-
-    /**
-     * @parameter expression="${project.build.testSourceDirectory}"
-     * @readonly
-     */
-    private File testSourceDirectory;
 
     public Result buildTest( String testFilename, List<? extends String> testClasses, Integer testControlPort,
                              Integer testPort )
@@ -230,8 +242,14 @@ public class TestCompilerMojo
     {
         String testFilename = "TestRunner";
 
-        Integer testControlPort = freePort();
-        Integer testPort = freePort();
+        if ( testControlPort == null )
+        {
+            testControlPort = freePort();
+        }
+        if ( testPort == null )
+        {
+            testPort = freePort();
+        }
         putPluginContext( FLEXMOJOS_TEST_CONTROL_PORT, testControlPort );
         putPluginContext( FLEXMOJOS_TEST_PORT, testPort );
         getLog().debug( "Flexmojos test port: " + testPort + " - control: " + testControlPort );
@@ -342,7 +360,7 @@ public class TestCompilerMojo
     @Override
     public File[] getExternalLibraryPath()
     {
-        return MavenUtils.getFiles( getGlobalArtifact() );
+        return MavenUtils.getFiles( getGlobalArtifactCollection() );
     }
 
     private StringBuilder getExtraIncludes( File testOutputDirectory )
@@ -372,7 +390,7 @@ public class TestCompilerMojo
     {
         if ( this.scanner == null )
         {
-            File[] sp = getSourcePath();
+            File[] sp = existingFiles( getSourcePath() );
 
             scanner = scanners.get( coverageStrategy );
             if ( scanner == null )
@@ -382,8 +400,8 @@ public class TestCompilerMojo
 
             Map<String, Object> context = new LinkedHashMap<String, Object>();
             // TODO need a better idea to resolve link report file
-            context.put( LINK_REPORT,
-                         file( project.getBuild().getFinalName() + "-" + LINK_REPORT + "." + XML,
+            context.put( FlexClassifier.LINK_REPORT,
+                         file( project.getBuild().getFinalName() + "-" + FlexClassifier.LINK_REPORT + "." + XML,
                                project.getBuild().getDirectory() ) );
             scanner.scan( sp, coverageExclusions, context );
         }
@@ -589,6 +607,14 @@ public class TestCompilerMojo
         files.addAll( PathUtil.existingFilesList( testCompileSourceRoots ) );
         files.addAll( Arrays.asList( super.getSourcePath() ) );
 
+        if ( getLocale() != null )
+        {
+            if ( localesSourcePath.getParentFile().exists() )
+            {
+                files.add( localesSourcePath );
+            }
+        }
+
         return files.toArray( new File[0] );
     }
 
@@ -630,27 +656,16 @@ public class TestCompilerMojo
 
     protected List<String> getTestClasses()
     {
-        getLog().debug( "Scanning for tests at " + testSourceDirectory + " for " + Arrays.toString( includeTestFiles )
-                            + " but " + Arrays.toString( excludeTestFiles ) );
+        getLog().debug( "Scanning for tests at " + testCompileSourceRoots + " for " + includeTestFiles + " but "
+                            + excludeTestFiles );
 
-        DirectoryScanner scanner = new DirectoryScanner();
-        scanner.setIncludes( includeTestFiles );
-        scanner.setExcludes( excludeTestFiles );
-        scanner.addDefaultExcludes();
-        scanner.setBasedir( testSourceDirectory );
-        scanner.scan();
+        FileSet fs = new FileSet();
+        fs.setIncludes( includeTestFiles );
+        fs.setExcludes( excludeTestFiles );
+        List<String> testClasses = filterClasses( asList( fs ), files( testCompileSourceRoots ) );
 
-        getLog().debug( "Test files: " + Arrays.toString( scanner.getIncludedFiles() ) );
-        List<String> testClasses = new ArrayList<String>();
-        for ( String testClass : scanner.getIncludedFiles() )
-        {
-            int endPoint = testClass.lastIndexOf( '.' );
-            testClass = testClass.substring( 0, endPoint ); // remove extension
-            testClass = testClass.replace( '/', '.' ); // Unix OS
-            testClass = testClass.replace( '\\', '.' ); // Windows OS
-            testClasses.add( testClass );
-        }
         getLog().debug( "Test classes: " + testClasses );
+
         return testClasses;
     }
 
@@ -658,26 +673,13 @@ public class TestCompilerMojo
     {
         if ( test != null )
         {
-            includeTestFiles = new String[] { test };
+            includeTestFiles = asList( test );
             excludeTestFiles = null;
         }
 
-        if ( includeTestFiles == null || includeTestFiles.length == 0 )
+        if ( includeTestFiles == null || includeTestFiles.isEmpty() )
         {
-            includeTestFiles = new String[] { "**/Test*.as", "**/*Test.as", "**/Test*.mxml", "**/*Test.mxml" };
-        }
-        else
-        {
-            for ( int i = 0; i < includeTestFiles.length; i++ )
-            {
-                String pattern = includeTestFiles[i];
-
-                if ( !pattern.endsWith( ".as" ) && !pattern.endsWith( ".mxml" ) )
-                {
-                    pattern = pattern + ".as";
-                }
-                includeTestFiles[i] = "**/" + pattern;
-            }
+            includeTestFiles = asList( "**/Test*.as", "**/*Test.as", "**/Test*.mxml", "**/*Test.mxml" );
         }
     }
 

@@ -1,15 +1,5 @@
 package org.sonatype.flexmojos.plugin.test;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.StringReader;
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
 import org.apache.maven.plugin.Mojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -31,6 +21,16 @@ import org.sonatype.flexmojos.test.launcher.LaunchFlashPlayerException;
 import org.sonatype.flexmojos.test.report.TestCaseReport;
 import org.sonatype.flexmojos.test.report.TestCoverageReport;
 import org.sonatype.flexmojos.util.PathUtil;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.StringReader;
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Goal to run unit tests on Flex. It does support the following frameworks:
@@ -109,6 +109,13 @@ public class TestRunMojo
      * @parameter expression="${flex.coverage}"
      */
     protected boolean coverage;
+    
+    /**
+     * Classes that shouldn't be include on code coverage analysis.
+     * 
+     * @parameter
+     */
+    private String[] coverageExclusions;
 
     /**
      * Location to save temporary files from coverage framework
@@ -139,7 +146,7 @@ public class TestRunMojo
      * @parameter expression="${flex.coverageProvider}" default-value="cobertura"
      */
     private String coverageProvider;
-
+    
     /**
      * Encoding used to generate coverage report
      * 
@@ -236,6 +243,13 @@ public class TestRunMojo
     private String targetPlayer;
 
     /**
+     * If specified, the flexmojos will use this value as the control port to connect to during test runs.
+     * 
+     * @parameter expression="${flex.testControlPort}"
+     */
+    private Integer testControlPort;
+
+    /**
      * @parameter default-value="false" expression="${maven.test.failure.ignore}"
      */
     private boolean testFailureIgnore;
@@ -245,6 +259,13 @@ public class TestRunMojo
      * @readonly
      */
     private File testOutputDirectory;
+
+    /**
+     * If specified, flexmojos will use this value as the port to connect to during test runs.
+     * 
+     * @parameter expression="${flex.testPort}"
+     */
+    private Integer testPort;
 
     /**
      * @component role="org.sonatype.flexmojos.test.TestRunner"
@@ -316,6 +337,8 @@ public class TestRunMojo
             try
             {
                 reporter = coverageReporterManager.getReporter( coverageProvider );
+                
+                reporter.setExcludes( coverageExclusions );
             }
             catch ( CoverageReportException e )
             {
@@ -334,7 +357,7 @@ public class TestRunMojo
             {
                 CoverageReportRequest request =
                     new CoverageReportRequest( coverageDataDirectory, coverageReportFormat, coverageReportEncoding,
-                                               coverageOutputDirectory,
+                                               coverageOutputDirectory, 
                                                new File( project.getBuild().getSourceDirectory() ) );
                 try
                 {
@@ -423,9 +446,20 @@ public class TestRunMojo
     public void runTests( String[] swfs, CoverageReporter reporter )
         throws MojoExecutionException, MojoFailureException
     {
-        Integer testPort = getFromPluginContext( TestCompilerMojo.FLEXMOJOS_TEST_PORT );
-        Integer testControlPort = getFromPluginContext( TestCompilerMojo.FLEXMOJOS_TEST_CONTROL_PORT );
+        if ( testPort == null )
+        {
+            // This will fail if you are trying to run the "test-run" goal in a separate maven execution from the
+            // "test-compile" goal!
+            testPort = getFromPluginContext( TestCompilerMojo.FLEXMOJOS_TEST_PORT );
+        }
+        if ( testControlPort == null )
+        {
+            // This will fail if you are trying to run the "test-run" goal in a separate maven execution from the
+            // "test-compile" goal!
+            testControlPort = getFromPluginContext( TestCompilerMojo.FLEXMOJOS_TEST_CONTROL_PORT );
+        }
         getLog().debug( "Found " + swfs.length + " test runners:\n" + Arrays.toString( swfs ) );
+        getLog().debug( "Using test port '" + testPort + "' and test control port '" + testControlPort + "'" );
         for ( String swfName : swfs )
         {
             runTest( swfName, testPort, testControlPort, reporter );
