@@ -8,7 +8,7 @@
   <parent>
     <groupId>org.sonatype.flexmojos</groupId>
     <artifactId>flexmojos-parent</artifactId>
-    <version>4.0-de5</version>
+    <version>4.0-de7</version>
   </parent>
 
   <artifactId>flexmojos-maven-plugin</artifactId>

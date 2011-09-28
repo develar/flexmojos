@@ -6,16 +6,16 @@
   <parent>
     <artifactId>flexmojos-sandbox</artifactId>
     <groupId>org.sonatype.flexmojos</groupId>
-    <version>4.0-de5</version>
+    <version>4.0-de7</version>
   </parent>
 
   <groupId>org.sonatype.flexmojos</groupId>
   <artifactId>flexmojos-nexus-plugin</artifactId>
-  <version>4.0-de5</version>
+  <version>4.0-de7</version>
 
   <packaging>nexus-plugin</packaging>
 
-  <name>Nexus Plugin Archetype</name>
+  <name>Flexmojos Nexus Plugin</name>
 
   <properties>
     <!-- Set the Nexus version here, against which you build the plugin -->
